@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 50;
+	objectVersion = 52;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -11,6 +11,14 @@
 		9A97A7C926C37B44003E6BA0 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A97A7C826C37B44003E6BA0 /* ContentView.swift */; };
 		9A97A7CB26C37B47003E6BA0 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 9A97A7CA26C37B47003E6BA0 /* Assets.xcassets */; };
 		9A97A7CE26C37B47003E6BA0 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 9A97A7CD26C37B47003E6BA0 /* Preview Assets.xcassets */; };
+		9A97A7D926C4AF4D003E6BA0 /* Group.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A97A7D826C4AF4D003E6BA0 /* Group.swift */; };
+		9A97A7DC26C4AFA0003E6BA0 /* Realm in Frameworks */ = {isa = PBXBuildFile; productRef = 9A97A7DB26C4AFA0003E6BA0 /* Realm */; };
+		9A97A7DE26C4AFA0003E6BA0 /* RealmSwift in Frameworks */ = {isa = PBXBuildFile; productRef = 9A97A7DD26C4AFA0003E6BA0 /* RealmSwift */; };
+		9A97A7E026C4AFD9003E6BA0 /* Item.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A97A7DF26C4AFD9003E6BA0 /* Item.swift */; };
+		9A97A7E226C4B097003E6BA0 /* GroupStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A97A7E126C4B097003E6BA0 /* GroupStore.swift */; };
+		9AE455DB26C8B4FD00AF5179 /* ItemsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9AE455DA26C8B4FD00AF5179 /* ItemsView.swift */; };
+		9AE455DF26C8BF5B00AF5179 /* AddingGroupForm.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9AE455DE26C8BF5B00AF5179 /* AddingGroupForm.swift */; };
+		9AE455E326C8C43300AF5179 /* AddingItemForm.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9AE455E226C8C43300AF5179 /* AddingItemForm.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -20,6 +28,12 @@
 		9A97A7CA26C37B47003E6BA0 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		9A97A7CD26C37B47003E6BA0 /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
 		9A97A7CF26C37B47003E6BA0 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		9A97A7D826C4AF4D003E6BA0 /* Group.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Group.swift; sourceTree = "<group>"; };
+		9A97A7DF26C4AFD9003E6BA0 /* Item.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Item.swift; sourceTree = "<group>"; };
+		9A97A7E126C4B097003E6BA0 /* GroupStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GroupStore.swift; sourceTree = "<group>"; };
+		9AE455DA26C8B4FD00AF5179 /* ItemsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ItemsView.swift; sourceTree = "<group>"; };
+		9AE455DE26C8BF5B00AF5179 /* AddingGroupForm.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddingGroupForm.swift; sourceTree = "<group>"; };
+		9AE455E226C8C43300AF5179 /* AddingItemForm.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddingItemForm.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -27,6 +41,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				9A97A7DE26C4AFA0003E6BA0 /* RealmSwift in Frameworks */,
+				9A97A7DC26C4AFA0003E6BA0 /* Realm in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -52,8 +68,10 @@
 		9A97A7C526C37B44003E6BA0 /* Image Progress Tracker */ = {
 			isa = PBXGroup;
 			children = (
+				9A97A7D726C4AF38003E6BA0 /* Views */,
+				9A97A7D626C4AF33003E6BA0 /* View Models */,
+				9A97A7D526C4AF29003E6BA0 /* Models */,
 				9A97A7C626C37B44003E6BA0 /* Image_Progress_TrackerApp.swift */,
-				9A97A7C826C37B44003E6BA0 /* ContentView.swift */,
 				9A97A7CA26C37B47003E6BA0 /* Assets.xcassets */,
 				9A97A7CF26C37B47003E6BA0 /* Info.plist */,
 				9A97A7CC26C37B47003E6BA0 /* Preview Content */,
@@ -67,6 +85,34 @@
 				9A97A7CD26C37B47003E6BA0 /* Preview Assets.xcassets */,
 			);
 			path = "Preview Content";
+			sourceTree = "<group>";
+		};
+		9A97A7D526C4AF29003E6BA0 /* Models */ = {
+			isa = PBXGroup;
+			children = (
+				9A97A7D826C4AF4D003E6BA0 /* Group.swift */,
+				9A97A7DF26C4AFD9003E6BA0 /* Item.swift */,
+			);
+			path = Models;
+			sourceTree = "<group>";
+		};
+		9A97A7D626C4AF33003E6BA0 /* View Models */ = {
+			isa = PBXGroup;
+			children = (
+				9A97A7E126C4B097003E6BA0 /* GroupStore.swift */,
+			);
+			path = "View Models";
+			sourceTree = "<group>";
+		};
+		9A97A7D726C4AF38003E6BA0 /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				9A97A7C826C37B44003E6BA0 /* ContentView.swift */,
+				9AE455DA26C8B4FD00AF5179 /* ItemsView.swift */,
+				9AE455DE26C8BF5B00AF5179 /* AddingGroupForm.swift */,
+				9AE455E226C8C43300AF5179 /* AddingItemForm.swift */,
+			);
+			path = Views;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -85,6 +131,10 @@
 			dependencies = (
 			);
 			name = "Image Progress Tracker";
+			packageProductDependencies = (
+				9A97A7DB26C4AFA0003E6BA0 /* Realm */,
+				9A97A7DD26C4AFA0003E6BA0 /* RealmSwift */,
+			);
 			productName = "Image Progress Tracker";
 			productReference = 9A97A7C326C37B44003E6BA0 /* Image Progress Tracker.app */;
 			productType = "com.apple.product-type.application";
@@ -112,6 +162,9 @@
 				Base,
 			);
 			mainGroup = 9A97A7BA26C37B44003E6BA0;
+			packageReferences = (
+				9A97A7DA26C4AFA0003E6BA0 /* XCRemoteSwiftPackageReference "realm-cocoa" */,
+			);
 			productRefGroup = 9A97A7C426C37B44003E6BA0 /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
@@ -138,7 +191,13 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				9A97A7E026C4AFD9003E6BA0 /* Item.swift in Sources */,
+				9AE455E326C8C43300AF5179 /* AddingItemForm.swift in Sources */,
+				9AE455DB26C8B4FD00AF5179 /* ItemsView.swift in Sources */,
+				9AE455DF26C8BF5B00AF5179 /* AddingGroupForm.swift in Sources */,
+				9A97A7D926C4AF4D003E6BA0 /* Group.swift in Sources */,
 				9A97A7C926C37B44003E6BA0 /* ContentView.swift in Sources */,
+				9A97A7E226C4B097003E6BA0 /* GroupStore.swift in Sources */,
 				9A97A7C726C37B44003E6BA0 /* Image_Progress_TrackerApp.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -328,6 +387,30 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		9A97A7DA26C4AFA0003E6BA0 /* XCRemoteSwiftPackageReference "realm-cocoa" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/realm/realm-cocoa.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 10.12.0;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		9A97A7DB26C4AFA0003E6BA0 /* Realm */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 9A97A7DA26C4AFA0003E6BA0 /* XCRemoteSwiftPackageReference "realm-cocoa" */;
+			productName = Realm;
+		};
+		9A97A7DD26C4AFA0003E6BA0 /* RealmSwift */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 9A97A7DA26C4AFA0003E6BA0 /* XCRemoteSwiftPackageReference "realm-cocoa" */;
+			productName = RealmSwift;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 9A97A7BB26C37B44003E6BA0 /* Project object */;
 }

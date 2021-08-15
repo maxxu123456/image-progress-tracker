@@ -11,7 +11,7 @@ import SwiftUI
 struct Image_Progress_TrackerApp: App {
     var body: some Scene {
         WindowGroup {
-            ContentView()
+            ContentView(db: GroupStore())
         }
     }
 }
