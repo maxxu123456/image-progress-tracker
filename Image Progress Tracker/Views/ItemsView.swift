@@ -12,12 +12,17 @@ struct ItemsView: View {
     @EnvironmentObject var db: GroupStore
     var group: Group
     var body: some View {
-        
-
         VStack {
             addingItemButton
             ForEach(group.items) { item in
-                Text(item.notes)
+                VStack {
+                    let data = try? Data(contentsOf: (documentDirectoryPath()?.appendingPathComponent(item.imageFilename))!)
+                    let image = UIImage(data: data!)
+                    Text(item.notes)
+                    Image(uiImage: image!)
+                        .resizable()
+                        .frame(width: 200, height: 200, alignment: /*@START_MENU_TOKEN@*/.center/*@END_MENU_TOKEN@*/)
+                }
             }
         }
         .sheet(isPresented: $addingItem, content: {

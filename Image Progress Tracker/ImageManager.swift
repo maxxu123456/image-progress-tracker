@@ -1,0 +1,32 @@
+//
+//  ImageManager.swift
+//  Image Progress Tracker
+//
+//  Created by Max Xu on 8/21/21.
+//
+
+import SwiftUI
+
+func documentDirectoryPath() -> URL? {
+    let path = FileManager.default.urls(for: .documentDirectory,
+                                        in: .userDomainMask)
+    return path.first
+}
+
+func saveJpg(_ image: UIImage) -> String {
+    let filename = generateRandomImageName()
+    if let jpgData = image.jpegData(compressionQuality: 0.5),
+        let path = documentDirectoryPath()?.appendingPathComponent(filename) {
+        try? jpgData.write(to: path)
+        return generateRandomImageName()
+    }
+    return ""
+    
+}
+
+private func generateRandomImageName() -> String {
+    let df = DateFormatter()
+    df.dateFormat = "yyyy-MM-dd hh:mm:ss"
+    let now = df.string(from: Date())
+    return now + ".jpg"
+}

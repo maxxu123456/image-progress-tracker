@@ -40,14 +40,15 @@ class GroupStore: ObservableObject {
             realm.delete(group)
         }
     }
-    func addItem(notes: String, groupId: String) {
+    func addItem(notes: String, groupId: String, image: UIImage) {
         objectWillChange.send()
         let realm = try! Realm()
         guard let group = realm.object(ofType: Group.self, forPrimaryKey: groupId)
         else {return}
+        let item = Item(imageFilename: saveJpg(image), notes: notes)
         try! realm.write {
-            group.items.append(Item(imageURL: "", notes: notes))
-            realm.add(Item(imageURL: "", notes: notes))
+            group.items.append(item)
+            realm.add(item)
             
         }
     }

@@ -9,14 +9,14 @@ import Foundation
 import RealmSwift
 
 class Item: Object, Identifiable {
-    @Persisted var imageURL: String
+    @Persisted var imageFilename: String
     @Persisted var notes: String
     @Persisted(primaryKey: true) var id = UUID().uuidString
-
 //    @Persisted(originProperty: "items") var assignee: LinkingObjects<Group>
-    convenience init(imageURL: String, notes: String) {
+    convenience init(imageFilename: String, notes: String) {
         self.init()
-        self.imageURL = imageURL
+        self.imageFilename = imageFilename
         self.notes = notes
+        
     }
 }
