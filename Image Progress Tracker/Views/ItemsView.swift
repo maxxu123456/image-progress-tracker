@@ -22,6 +22,7 @@ struct ItemsView: View {
                     Image(uiImage: image!)
                         .resizable()
                         .frame(width: 200, height: 200, alignment: /*@START_MENU_TOKEN@*/.center/*@END_MENU_TOKEN@*/)
+                        .cornerRadius(20)
                 }
             }
         }
@@ -38,5 +39,11 @@ struct ItemsView: View {
                     .bold()
             }.foregroundColor(.green)
         }).padding()
+    }
+}
+
+struct ItemsView_Previews: PreviewProvider {
+    static var previews: some View {
+        ItemsView(group: Group(name: "Test Group")).environmentObject(GroupStore())
     }
 }
