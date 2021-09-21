@@ -13,7 +13,7 @@ struct AddingItemForm: View {
     @EnvironmentObject var db: GroupStore
     @State private var inputImage: UIImage?
     @State private var image: UIImage?
-    @State private var showingImagePicker = false
+    @State private var showingImagePicker = true
     func loadImage() {
         guard let inputImage = inputImage else {return}
         image = inputImage

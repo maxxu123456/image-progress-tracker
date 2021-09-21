@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		9A11998426F9868800C7C28D /* Camera.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A11998326F9868800C7C28D /* Camera.swift */; };
 		9A97A7C726C37B44003E6BA0 /* Image_Progress_TrackerApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A97A7C626C37B44003E6BA0 /* Image_Progress_TrackerApp.swift */; };
 		9A97A7C926C37B44003E6BA0 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A97A7C826C37B44003E6BA0 /* ContentView.swift */; };
 		9A97A7CB26C37B47003E6BA0 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 9A97A7CA26C37B47003E6BA0 /* Assets.xcassets */; };
@@ -24,6 +25,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		9A11998326F9868800C7C28D /* Camera.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Camera.swift; sourceTree = "<group>"; };
 		9A97A7C326C37B44003E6BA0 /* Image Progress Tracker.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Image Progress Tracker.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		9A97A7C626C37B44003E6BA0 /* Image_Progress_TrackerApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Image_Progress_TrackerApp.swift; sourceTree = "<group>"; };
 		9A97A7C826C37B44003E6BA0 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
@@ -117,6 +119,7 @@
 				9AE455DE26C8BF5B00AF5179 /* AddingGroupForm.swift */,
 				9AE455E226C8C43300AF5179 /* AddingItemForm.swift */,
 				9AE455E426C976CF00AF5179 /* ImagePicker.swift */,
+				9A11998326F9868800C7C28D /* Camera.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -197,6 +200,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				9A11998426F9868800C7C28D /* Camera.swift in Sources */,
 				9A97A7E026C4AFD9003E6BA0 /* Item.swift in Sources */,
 				9AD52EA726D1D54A0026D57C /* ImageManager.swift in Sources */,
 				9AE455E326C8C43300AF5179 /* AddingItemForm.swift in Sources */,

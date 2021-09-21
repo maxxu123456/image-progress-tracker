@@ -52,5 +52,9 @@ class GroupStore: ObservableObject {
             
         }
     }
+    func printRealmDirectory() {
+        let realm = try! Realm()
+        print(realm.configuration.fileURL!)
+    }
 
 }
