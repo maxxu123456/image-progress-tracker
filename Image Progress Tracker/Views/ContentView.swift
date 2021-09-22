@@ -20,7 +20,7 @@ struct ContentView: View {
                     addingGroupButton
 
                     ForEach(db.groups) { group in
-                        NavigationLink(destination: ItemsView(group: group).environmentObject(db)) {
+                        NavigationLink(destination: ItemsView(groupId: group.id).environmentObject(db)) {
                             Text(group.name)
                         Button(action: {
                             db.deleteGroup(id: group.id)

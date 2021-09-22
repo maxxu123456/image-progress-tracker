@@ -10,8 +10,10 @@ import SwiftUI
 struct ItemsView: View {
     @State private var addingItem = false
     @EnvironmentObject var db: GroupStore
-    
-    var group: Group
+    var groupId: String
+    private var group: Group {
+        db.groups.filter { $0.id == groupId }[0]
+    }
     var body: some View {
 
         VStack {
@@ -52,11 +54,5 @@ struct ItemsView: View {
                     .bold()
             }.foregroundColor(.green)
         }).padding()
-    }
-}
-
-struct ItemsView_Previews: PreviewProvider {
-    static var previews: some View {
-        ItemsView(group: Group(name: "Test Group")).environmentObject(GroupStore())
     }
 }
