@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import Foundation
 
 struct ItemsView: View {
     @State private var addingItem = false
@@ -14,6 +15,7 @@ struct ItemsView: View {
     private var group: Group {
         db.groups.filter { $0.id == groupId }[0]
     }
+        
     var body: some View {
 
         VStack {
@@ -22,9 +24,12 @@ struct ItemsView: View {
             ScrollView() {
                 ForEach(group.items) { item in
                     VStack {
+                        //Get Image
                         let data = try? Data(contentsOf: (documentDirectoryPath()?.appendingPathComponent(item.imageFilename))!)
                         let image = UIImage(data: data!)
+
                         Text(item.notes)
+                        Text(dateToString(date: item.dateCreated))
                         Image(uiImage: image!)
                             .resizable()
                             .cornerRadius(10)
