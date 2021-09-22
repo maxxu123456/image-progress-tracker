@@ -52,6 +52,15 @@ class GroupStore: ObservableObject {
             
         }
     }
+    func deleteItem(id: String) {
+        objectWillChange.send()
+        let realm = try! Realm()
+        guard let item = realm.object(ofType: Item.self, forPrimaryKey: id)
+        else {return}
+        try! realm.write {
+            realm.delete(item)
+        }
+    }
     func printRealmDirectory() {
         let realm = try! Realm()
         print(realm.configuration.fileURL!)

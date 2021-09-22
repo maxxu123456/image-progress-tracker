@@ -34,7 +34,20 @@ struct ItemsView: View {
                                     let imageSaver = ImageSaver()
                                     imageSaver.writeToPhotoAlbum(image: image!)
                                 }) {
-                                    Text("Save Image to Library")
+                                    HStack {
+                                        Text("Save Image to Library")
+                                        Image(systemName: "square.and.arrow.down")
+                                    }
+
+                                }
+                                Button(role: .destructive, action: {
+                                    db.deleteItem(id: item.id)
+                                }) {
+                                    HStack {
+                                        Text("Delete")
+                                        Image(systemName: "trash")
+                                    }
+
                                 }
                             }
                     }
