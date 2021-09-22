@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		9A11998426F9868800C7C28D /* Camera.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A11998326F9868800C7C28D /* Camera.swift */; };
 		9A616E0526FBD46A001E59DC /* DateManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A616E0426FBD46A001E59DC /* DateManager.swift */; };
+		9A616E0726FBD637001E59DC /* ItemView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A616E0626FBD637001E59DC /* ItemView.swift */; };
 		9A97A7C726C37B44003E6BA0 /* Image_Progress_TrackerApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A97A7C626C37B44003E6BA0 /* Image_Progress_TrackerApp.swift */; };
 		9A97A7C926C37B44003E6BA0 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A97A7C826C37B44003E6BA0 /* ContentView.swift */; };
 		9A97A7CB26C37B47003E6BA0 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 9A97A7CA26C37B47003E6BA0 /* Assets.xcassets */; };
@@ -28,6 +29,7 @@
 /* Begin PBXFileReference section */
 		9A11998326F9868800C7C28D /* Camera.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Camera.swift; sourceTree = "<group>"; };
 		9A616E0426FBD46A001E59DC /* DateManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DateManager.swift; sourceTree = "<group>"; };
+		9A616E0626FBD637001E59DC /* ItemView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ItemView.swift; sourceTree = "<group>"; };
 		9A97A7C326C37B44003E6BA0 /* Image Progress Tracker.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Image Progress Tracker.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		9A97A7C626C37B44003E6BA0 /* Image_Progress_TrackerApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Image_Progress_TrackerApp.swift; sourceTree = "<group>"; };
 		9A97A7C826C37B44003E6BA0 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
@@ -123,6 +125,7 @@
 				9AE455E226C8C43300AF5179 /* AddingItemForm.swift */,
 				9AE455E426C976CF00AF5179 /* ImagePicker.swift */,
 				9A11998326F9868800C7C28D /* Camera.swift */,
+				9A616E0626FBD637001E59DC /* ItemView.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -212,6 +215,7 @@
 				9AE455E526C976CF00AF5179 /* ImagePicker.swift in Sources */,
 				9AE455DF26C8BF5B00AF5179 /* AddingGroupForm.swift in Sources */,
 				9A97A7D926C4AF4D003E6BA0 /* Group.swift in Sources */,
+				9A616E0726FBD637001E59DC /* ItemView.swift in Sources */,
 				9A97A7C926C37B44003E6BA0 /* ContentView.swift in Sources */,
 				9A97A7E226C4B097003E6BA0 /* GroupStore.swift in Sources */,
 				9A97A7C726C37B44003E6BA0 /* Image_Progress_TrackerApp.swift in Sources */,

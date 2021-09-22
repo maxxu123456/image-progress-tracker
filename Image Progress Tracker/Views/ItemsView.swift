@@ -15,49 +15,62 @@ struct ItemsView: View {
     private var group: Group {
         db.groups.filter { $0.id == groupId }[0]
     }
-        
+    
     var body: some View {
-
+        
         VStack {
             let _ = print(group.items)
-            addingItemButton
-            ScrollView() {
-                ForEach(group.items) { item in
-                    VStack {
-                        //Get Image
-                        let data = try? Data(contentsOf: (documentDirectoryPath()?.appendingPathComponent(item.imageFilename))!)
-                        let image = UIImage(data: data!)
-
-                        Text(item.notes)
-                        Text(dateToString(date: item.dateCreated))
-                        Image(uiImage: image!)
-                            .resizable()
-                            .cornerRadius(10)
-                            .frame(width: 200, height: 200, alignment: .center)
-                            .contextMenu {
-                                Button(action: {
-                                    let imageSaver = ImageSaver()
-                                    imageSaver.writeToPhotoAlbum(image: image!)
-                                }) {
-                                    HStack {
-                                        Text("Save Image to Library")
-                                        Image(systemName: "square.and.arrow.down")
+                ScrollView() {
+                    ForEach(group.items) { item in
+                        VStack {
+                            //Get Image
+                            let data = try? Data(contentsOf: (documentDirectoryPath()?.appendingPathComponent(item.imageFilename))!)
+                            let image = UIImage(data: data!)
+                            
+                            Text(item.notes)
+                            Text(dateToString(date: item.dateCreated))
+                            NavigationLink(destination: ItemView(image: image!)) {
+                                Image(uiImage: image!)
+                                    .resizable()
+                                    .cornerRadius(10)
+                                    .frame(width: 200, height: 200, alignment: .center)
+                                    .contextMenu {
+                                        Button(action: {
+                                            let imageSaver = ImageSaver()
+                                            imageSaver.writeToPhotoAlbum(image: image!)
+                                        }) {
+                                            HStack {
+                                                Text("Save Image to Library")
+                                                Image(systemName: "square.and.arrow.down")
+                                            }
+                                            
+                                        }
+                                        Button(role: .destructive, action: {
+                                            db.deleteItem(id: item.id)
+                                        }) {
+                                            HStack {
+                                                Text("Delete")
+                                                Image(systemName: "trash")
+                                            }
+                                            
+                                        }
                                     }
-
-                                }
-                                Button(role: .destructive, action: {
-                                    db.deleteItem(id: item.id)
-                                }) {
-                                    HStack {
-                                        Text("Delete")
-                                        Image(systemName: "trash")
-                                    }
-
-                                }
+                                
                             }
+                        }
                     }
                 }
-            }
+                .navigationTitle(group.name)
+                .navigationBarTitleDisplayMode(.inline)
+                .toolbar {
+                    ToolbarItem(placement:.navigationBarTrailing) {
+                        addingItemButton
+
+                    }
+                }
+            
+
+            
         }
         .sheet(isPresented: $addingItem, content: {
             AddingItemForm(groupId: group.id).environmentObject(db)
@@ -68,8 +81,6 @@ struct ItemsView: View {
         Button(action: {addingItem = true}, label: {
             HStack{
                 Image(systemName: "plus.circle.fill")
-                Text("Add Item")
-                    .bold()
             }.foregroundColor(.green)
         }).padding()
     }

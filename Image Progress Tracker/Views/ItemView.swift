@@ -1,0 +1,19 @@
+//
+//  ItemView.swift
+//  Image Progress Tracker
+//
+//  Created by Max Xu on 9/22/21.
+//
+
+import Foundation
+import UIKit
+import SwiftUI
+
+struct ItemView: View {
+    var image: UIImage
+    var body: some View {
+        Image(uiImage: image)
+            .resizable()
+            .aspectRatio(image.size, contentMode: .fill)
+    }
+}
