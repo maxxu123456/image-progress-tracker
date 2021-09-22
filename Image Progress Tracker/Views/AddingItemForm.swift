@@ -23,15 +23,27 @@ struct AddingItemForm: View {
         NavigationView {
             Form {
                 
-                Section(header: Text("Notes")) {
-                    TextField("", text: $notes)
-                }
+//                Section(header: Text("Image")) {
+//                    VStack {
+//                        Button(action: {
+//                            showingImagePicker.toggle()
+//                        }, label: {
+//                            Text("Pick Image From Library")
+//                        })
+//                        if let validImage = image {
+//                            Image(uiImage: validImage)
+//                                .resizable()
+//                                .frame(width: /*@START_MENU_TOKEN@*/100/*@END_MENU_TOKEN@*/, height: /*@START_MENU_TOKEN@*/100/*@END_MENU_TOKEN@*/)
+//                        }
+//                    }
+//
+//                }
                 Section(header: Text("Image")) {
                     VStack {
                         Button(action: {
                             showingImagePicker.toggle()
                         }, label: {
-                            Text("Pick Image From Library")
+                            Text("Take a Photo")
                         })
                         if let validImage = image {
                             Image(uiImage: validImage)
@@ -41,7 +53,9 @@ struct AddingItemForm: View {
                     }
                     
                 }
-                
+                Section(header: Text("Notes")) {
+                    TextField("", text: $notes)
+                }
             }
             .navigationTitle("Add Item")
             .navigationBarTitleDisplayMode(.inline)
