@@ -15,18 +15,20 @@ struct ContentView: View {
     var body: some View {
         VStack{
             NavigationView {
-                
-                List {
-                    addingGroupButton
+                VStack {
+                    List {
 
-                    ForEach(db.groups) { group in
-                        NavigationLink(destination: ItemsView(groupId: group.id).environmentObject(db)) {
-                            Text(group.name)
+                        ForEach(db.groups) { group in
+                            NavigationLink(destination: ItemsView(groupId: group.id).environmentObject(db)) {
+                                Text(group.name)
+                            }
+                            
+                            
                         }
                         
-                        
                     }
-                    
+                    addingGroupButton
+
                 }
             }
             
@@ -41,7 +43,7 @@ struct ContentView: View {
     var addingGroupButton: some View {
         Button(action: {addingGroup = true}, label: {
             HStack{
-                Image(systemName: "plus.circle.fill")
+                Image(systemName: "folder.badge.plus")
                 Text("Add Group")
                     .bold()
             }.foregroundColor(.green)
