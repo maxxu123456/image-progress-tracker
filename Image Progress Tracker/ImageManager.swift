@@ -40,3 +40,9 @@ class ImageSaver: NSObject {
         print("Save finished!")
     }
 }
+
+func getImageFromDocumentDirectory(fileName: String) -> UIImage {
+    let data = try? Data(contentsOf: (documentDirectoryPath()?.appendingPathComponent(fileName))!)
+    let image = UIImage(data: data!)
+    return image!
+}

@@ -23,21 +23,18 @@ struct ItemsView: View {
                 ScrollView() {
                     ForEach(group.items) { item in
                         VStack {
-                            //Get Image
-                            let data = try? Data(contentsOf: (documentDirectoryPath()?.appendingPathComponent(item.imageFilename))!)
-                            let image = UIImage(data: data!)
-                            
+                            let image = getImageFromDocumentDirectory(fileName: item.imageFilename)
                             Text(item.notes)
                             Text(dateToString(date: item.dateCreated))
-                            NavigationLink(destination: ItemView(image: image!)) {
-                                Image(uiImage: image!)
+                            NavigationLink(destination: ItemView(itemId: item.id, groupId: groupId).environmentObject(db)) {
+                                Image(uiImage: image)
                                     .resizable()
                                     .cornerRadius(10)
                                     .frame(width: 200, height: 200, alignment: .center)
                                     .contextMenu {
                                         Button(action: {
                                             let imageSaver = ImageSaver()
-                                            imageSaver.writeToPhotoAlbum(image: image!)
+                                            imageSaver.writeToPhotoAlbum(image: image)
                                         }) {
                                             HStack {
                                                 Text("Save Image to Library")
