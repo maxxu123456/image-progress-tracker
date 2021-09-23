@@ -30,6 +30,7 @@ struct ContentView: View {
                     addingGroupButton
 
                 }
+                .navigationTitle("Groups")
             }
             
         }
