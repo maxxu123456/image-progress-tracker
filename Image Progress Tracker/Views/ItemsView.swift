@@ -46,7 +46,9 @@ struct ItemsView: View {
                                             
                                         }
                                         Button(role: .destructive, action: {
-                                            db.deleteItem(id: item.id)
+                                            withAnimation {
+                                                db.deleteItem(id: item.id)
+                                            }
                                         }) {
                                             HStack {
                                                 Text("Delete")
@@ -80,7 +82,7 @@ struct ItemsView: View {
     var addingItemButton: some View {
         Button(action: {addingItem = true}, label: {
             HStack{
-                Image(systemName: "plus.circle.fill")
+                Image(systemName: "plus")
             }.foregroundColor(.green)
         }).padding()
     }

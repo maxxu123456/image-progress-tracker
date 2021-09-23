@@ -12,8 +12,12 @@ import SwiftUI
 struct ItemView: View {
     var image: UIImage
     var body: some View {
-        Image(uiImage: image)
-            .resizable()
-            .aspectRatio(image.size, contentMode: .fill)
+        GeometryReader { geo in
+            Image(uiImage: image)
+                .resizable()
+                .aspectRatio(contentMode: .fit)
+                .frame(width: geo.size.width)
+        }
+
     }
 }
