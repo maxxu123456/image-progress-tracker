@@ -21,43 +21,48 @@ struct ItemsView: View {
         VStack {
             let _ = print(group.items)
                 ScrollView() {
-                    ForEach(group.items) { item in
-                        VStack {
-                            let image = getImageFromDocumentDirectory(fileName: item.imageFilename)
-                            Text(item.notes)
-                            Text(dateToString(date: item.dateCreated))
-                            NavigationLink(destination: ItemView(itemId: item.id, groupId: groupId).environmentObject(db)) {
-                                Image(uiImage: image)
-                                    .resizable()
-                                    .cornerRadius(10)
-                                    .frame(width: 200, height: 200, alignment: .center)
-                                    .contextMenu {
-                                        Button(action: {
-                                            let imageSaver = ImageSaver()
-                                            imageSaver.writeToPhotoAlbum(image: image)
-                                        }) {
-                                            HStack {
-                                                Text("Save Image to Library")
-                                                Image(systemName: "square.and.arrow.down")
+                    if (group.items.count == 0) {
+                        Text("Add an Item using the button above.")
+                    } else {
+                        ForEach(group.items) { item in
+                            VStack {
+                                let image = getImageFromDocumentDirectory(fileName: item.imageFilename)
+                                Text(item.notes)
+                                Text(dateToString(date: item.dateCreated))
+                                NavigationLink(destination: ItemView(itemId: item.id, groupId: groupId).environmentObject(db)) {
+                                    Image(uiImage: image)
+                                        .resizable()
+                                        .cornerRadius(10)
+                                        .frame(width: 200, height: 200, alignment: .center)
+                                        .contextMenu {
+                                            Button(action: {
+                                                let imageSaver = ImageSaver()
+                                                imageSaver.writeToPhotoAlbum(image: image)
+                                            }) {
+                                                HStack {
+                                                    Text("Save Image to Library")
+                                                    Image(systemName: "square.and.arrow.down")
+                                                }
+                                                
                                             }
-                                            
+                                            Button(role: .destructive, action: {
+                                                withAnimation {
+                                                    db.deleteItem(id: item.id)
+                                                }
+                                            }) {
+                                                HStack {
+                                                    Text("Delete")
+                                                    Image(systemName: "trash")
+                                                }
+                                                
+                                            }
                                         }
-                                        Button(role: .destructive, action: {
-                                            withAnimation {
-                                                db.deleteItem(id: item.id)
-                                            }
-                                        }) {
-                                            HStack {
-                                                Text("Delete")
-                                                Image(systemName: "trash")
-                                            }
-                                            
-                                        }
-                                    }
-                                
+                                    
+                                }
                             }
                         }
                     }
+                    
                 }
                 .navigationTitle(group.name)
                 .navigationBarTitleDisplayMode(.inline)
