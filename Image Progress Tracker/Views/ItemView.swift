@@ -14,11 +14,12 @@ struct ItemView: View {
     var itemId: String
     var groupId: String
     var item: Item {
-        let group = db.groups.filter { $0.id == groupId }[0]
-        let item = group.items.filter { $0.id == itemId }[0]
-        return item
+        let group = db.groups.first(where: { $0.id == groupId })
+        let item = group!.items.first(where: { $0.id == itemId })
+        return item!
     }
     var body: some View {
+        let _ = print(itemId)
         Text(dateToString(date: item.dateCreated))
         GeometryReader { geo in
             Image(uiImage: getImageFromDocumentDirectory(fileName: item.imageFilename))
