@@ -8,6 +8,9 @@
 
 /* Begin PBXBuildFile section */
 		9A11998426F9868800C7C28D /* Camera.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A11998326F9868800C7C28D /* Camera.swift */; };
+		9A205C9427176BC300487507 /* CompareView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A205C9327176BC300487507 /* CompareView.swift */; };
+		9A262241276FD24900CA1BB2 /* SymbolsPicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A262240276FD24900CA1BB2 /* SymbolsPicker.swift */; };
+		9A262244276FD2C200CA1BB2 /* Symbols.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A262243276FD2C200CA1BB2 /* Symbols.swift */; };
 		9A616E0526FBD46A001E59DC /* DateManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A616E0426FBD46A001E59DC /* DateManager.swift */; };
 		9A616E0726FBD637001E59DC /* ItemView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A616E0626FBD637001E59DC /* ItemView.swift */; };
 		9A97A7C726C37B44003E6BA0 /* Image_Progress_TrackerApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A97A7C626C37B44003E6BA0 /* Image_Progress_TrackerApp.swift */; };
@@ -28,6 +31,9 @@
 
 /* Begin PBXFileReference section */
 		9A11998326F9868800C7C28D /* Camera.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Camera.swift; sourceTree = "<group>"; };
+		9A205C9327176BC300487507 /* CompareView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CompareView.swift; sourceTree = "<group>"; };
+		9A262240276FD24900CA1BB2 /* SymbolsPicker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SymbolsPicker.swift; sourceTree = "<group>"; };
+		9A262243276FD2C200CA1BB2 /* Symbols.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Symbols.swift; sourceTree = "<group>"; };
 		9A616E0426FBD46A001E59DC /* DateManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DateManager.swift; sourceTree = "<group>"; };
 		9A616E0626FBD637001E59DC /* ItemView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ItemView.swift; sourceTree = "<group>"; };
 		9A97A7C326C37B44003E6BA0 /* Image Progress Tracker.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Image Progress Tracker.app"; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -59,6 +65,14 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		9A262242276FD2A400CA1BB2 /* Utility */ = {
+			isa = PBXGroup;
+			children = (
+				9A262243276FD2C200CA1BB2 /* Symbols.swift */,
+			);
+			path = Utility;
+			sourceTree = "<group>";
+		};
 		9A97A7BA26C37B44003E6BA0 = {
 			isa = PBXGroup;
 			children = (
@@ -78,6 +92,7 @@
 		9A97A7C526C37B44003E6BA0 /* Image Progress Tracker */ = {
 			isa = PBXGroup;
 			children = (
+				9A262242276FD2A400CA1BB2 /* Utility */,
 				9A97A7D726C4AF38003E6BA0 /* Views */,
 				9A97A7D626C4AF33003E6BA0 /* View Models */,
 				9A97A7D526C4AF29003E6BA0 /* Models */,
@@ -126,6 +141,8 @@
 				9AE455E426C976CF00AF5179 /* ImagePicker.swift */,
 				9A11998326F9868800C7C28D /* Camera.swift */,
 				9A616E0626FBD637001E59DC /* ItemView.swift */,
+				9A205C9327176BC300487507 /* CompareView.swift */,
+				9A262240276FD24900CA1BB2 /* SymbolsPicker.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -207,6 +224,8 @@
 			buildActionMask = 2147483647;
 			files = (
 				9A11998426F9868800C7C28D /* Camera.swift in Sources */,
+				9A262244276FD2C200CA1BB2 /* Symbols.swift in Sources */,
+				9A262241276FD24900CA1BB2 /* SymbolsPicker.swift in Sources */,
 				9A616E0526FBD46A001E59DC /* DateManager.swift in Sources */,
 				9A97A7E026C4AFD9003E6BA0 /* Item.swift in Sources */,
 				9AD52EA726D1D54A0026D57C /* ImageManager.swift in Sources */,
@@ -218,6 +237,7 @@
 				9A616E0726FBD637001E59DC /* ItemView.swift in Sources */,
 				9A97A7C926C37B44003E6BA0 /* ContentView.swift in Sources */,
 				9A97A7E226C4B097003E6BA0 /* GroupStore.swift in Sources */,
+				9A205C9427176BC300487507 /* CompareView.swift in Sources */,
 				9A97A7C726C37B44003E6BA0 /* Image_Progress_TrackerApp.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
