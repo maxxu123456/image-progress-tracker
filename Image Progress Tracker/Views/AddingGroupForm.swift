@@ -11,13 +11,28 @@ struct AddingGroupForm: View {
     @Environment(\.presentationMode) var presentationMode
     @EnvironmentObject var db: GroupStore
     @State private var groupName: String = ""
+    @State private var icon = Constants.defaultSymbol
     var body: some View {
         NavigationView {
-            Form {
-                Section(header: Text("Group Name")) {
-                    TextField("", text: $groupName)
+            VStack{
+
+                Form {
+                    HStack{
+                        Spacer()
+                        Image(systemName: icon)
+                            .font(.largeTitle)
+                        Spacer()
+                    }
+                    
+                    Section(header: Text("Group Name")) {
+                        TextField("", text: $groupName)
+                    }
+                    Section(header: Text("Icon")) {
+                        SymbolsPicker(icon: $icon)
+                    }
                 }
             }
+            
             
             .navigationTitle("Add Group")
             .navigationBarTitleDisplayMode(.inline)
@@ -31,7 +46,7 @@ struct AddingGroupForm: View {
                 }
                 ToolbarItem(placement:.navigationBarTrailing) {
                     Button(action: {
-                        db.addGroup(name: groupName)
+                        db.addGroup(name: groupName, icon: icon)
                         groupName = ""
                         presentationMode.wrappedValue.dismiss()
                     }, label: {

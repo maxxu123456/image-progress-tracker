@@ -11,6 +11,7 @@
 		9A205C9427176BC300487507 /* CompareView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A205C9327176BC300487507 /* CompareView.swift */; };
 		9A262241276FD24900CA1BB2 /* SymbolsPicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A262240276FD24900CA1BB2 /* SymbolsPicker.swift */; };
 		9A262244276FD2C200CA1BB2 /* Symbols.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A262243276FD2C200CA1BB2 /* Symbols.swift */; };
+		9A262246276FE8F000CA1BB2 /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A262245276FE8F000CA1BB2 /* Constants.swift */; };
 		9A616E0526FBD46A001E59DC /* DateManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A616E0426FBD46A001E59DC /* DateManager.swift */; };
 		9A616E0726FBD637001E59DC /* ItemView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A616E0626FBD637001E59DC /* ItemView.swift */; };
 		9A97A7C726C37B44003E6BA0 /* Image_Progress_TrackerApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A97A7C626C37B44003E6BA0 /* Image_Progress_TrackerApp.swift */; };
@@ -34,6 +35,7 @@
 		9A205C9327176BC300487507 /* CompareView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CompareView.swift; sourceTree = "<group>"; };
 		9A262240276FD24900CA1BB2 /* SymbolsPicker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SymbolsPicker.swift; sourceTree = "<group>"; };
 		9A262243276FD2C200CA1BB2 /* Symbols.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Symbols.swift; sourceTree = "<group>"; };
+		9A262245276FE8F000CA1BB2 /* Constants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Constants.swift; sourceTree = "<group>"; };
 		9A616E0426FBD46A001E59DC /* DateManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DateManager.swift; sourceTree = "<group>"; };
 		9A616E0626FBD637001E59DC /* ItemView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ItemView.swift; sourceTree = "<group>"; };
 		9A97A7C326C37B44003E6BA0 /* Image Progress Tracker.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Image Progress Tracker.app"; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -69,6 +71,7 @@
 			isa = PBXGroup;
 			children = (
 				9A262243276FD2C200CA1BB2 /* Symbols.swift */,
+				9A262245276FE8F000CA1BB2 /* Constants.swift */,
 			);
 			path = Utility;
 			sourceTree = "<group>";
@@ -224,6 +227,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				9A11998426F9868800C7C28D /* Camera.swift in Sources */,
+				9A262246276FE8F000CA1BB2 /* Constants.swift in Sources */,
 				9A262244276FD2C200CA1BB2 /* Symbols.swift in Sources */,
 				9A262241276FD24900CA1BB2 /* SymbolsPicker.swift in Sources */,
 				9A616E0526FBD46A001E59DC /* DateManager.swift in Sources */,

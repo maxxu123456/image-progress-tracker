@@ -10,10 +10,12 @@ import RealmSwift
 
 class Group: Object, Identifiable {
     @Persisted var name: String
+    @Persisted var icon: String
     @Persisted var items: List<Item> = List<Item>()
     @Persisted(primaryKey: true) var id = UUID().uuidString
-    convenience init(name: String) {
+    convenience init(name: String, icon: String) {
         self.init()
         self.name = name
+        self.icon = icon
     }
 }

@@ -20,7 +20,11 @@ struct ContentView: View {
 
                         ForEach(db.groups) { group in
                             NavigationLink(destination: ItemsView(groupId: group.id).environmentObject(db)) {
-                                Text(group.name)
+                                HStack{
+                                    Image(systemName: group.icon)
+                                    Text(group.name)
+
+                                }
                             }
                             
                             

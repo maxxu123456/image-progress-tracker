@@ -20,11 +20,11 @@ class GroupStore: ObservableObject {
         groupResults = realm.objects(Group.self)
     }
     
-    func addGroup(name: String) {
+    func addGroup(name: String, icon: String) {
         objectWillChange.send()
         let realm = try! Realm()
         try! realm.write {
-            realm.add(Group(name: name))
+            realm.add(Group(name: name, icon: icon))
             
         }
     }
