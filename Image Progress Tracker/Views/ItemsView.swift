@@ -33,8 +33,10 @@ struct ItemsView: View {
                                     NavigationLink(destination: ItemView(itemId: item.id, groupId: groupId).environmentObject(db)) {
                                         Image(uiImage: image)
                                             .resizable()
-                                            .cornerRadius(10)
+                                            .scaledToFill()
                                             .frame(width: 200, height: 200, alignment: .center)
+                                            .clipped()
+                                            .cornerRadius(10)
                                             .contextMenu {
                                                 Button(action: {
                                                     let imageSaver = ImageSaver()
