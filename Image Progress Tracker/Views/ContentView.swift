@@ -23,6 +23,10 @@ struct ContentView: View {
                                 HStack{
                                     Image(systemName: group.icon)
                                     Text(group.name)
+                                    Text(String(group.items.count) + " items")
+                                        .fontWeight(.light)
+                                        .font(.subheadline)
+                                        .foregroundColor(.gray)
 
                                 }
                             }

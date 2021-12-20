@@ -29,7 +29,6 @@ struct ItemsView: View {
                                 Spacer()
                                 VStack {
                                     let image = getImageFromDocumentDirectory(fileName: item.imageFilename)
-                                    Text(item.notes)
                                     Text(dateToString(date: item.dateCreated))
                                     NavigationLink(destination: ItemView(itemId: item.id, groupId: groupId).environmentObject(db)) {
                                         Image(uiImage: image)
