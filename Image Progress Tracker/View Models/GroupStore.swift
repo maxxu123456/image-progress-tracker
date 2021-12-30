@@ -51,6 +51,7 @@ class GroupStore: ObservableObject {
             realm.add(item)
             
         }
+        print("notes:\(notes) | groupId: \(groupId)" )
     }
     func deleteItem(id: String) {
         objectWillChange.send()

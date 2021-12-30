@@ -22,22 +22,6 @@ struct AddingItemForm: View {
     var body: some View {
         NavigationView {
             Form {
-                
-//                Section(header: Text("Image")) {
-//                    VStack {
-//                        Button(action: {
-//                            showingImagePicker.toggle()
-//                        }, label: {
-//                            Text("Pick Image From Library")
-//                        })
-//                        if let validImage = image {
-//                            Image(uiImage: validImage)
-//                                .resizable()
-//                                .frame(width: /*@START_MENU_TOKEN@*/100/*@END_MENU_TOKEN@*/, height: /*@START_MENU_TOKEN@*/100/*@END_MENU_TOKEN@*/)
-//                        }
-//                    }
-//
-//                }
                 Section(header: Text("Image")) {
                     VStack {
                         Button(action: {
@@ -62,6 +46,9 @@ struct AddingItemForm: View {
             .toolbar {
                 ToolbarItem(placement: .navigationBarLeading) {
                     Button(action: {
+                        notes = ""
+                        image = nil
+                        inputImage = nil
                         presentationMode.wrappedValue.dismiss()
                     }, label: {
                         Text("Exit")
@@ -72,6 +59,8 @@ struct AddingItemForm: View {
                         Button(action: {
                             db.addItem(notes: notes, groupId: groupId,image: validImage)
                             notes = ""
+                            image = nil
+                            inputImage = nil
                             presentationMode.wrappedValue.dismiss()
                         }, label: {
                             Text("Save")

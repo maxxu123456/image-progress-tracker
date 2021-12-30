@@ -10,6 +10,7 @@ import SwiftUI
 struct CompareView: View {
     var body: some View {
         GeometryReader { geo in
+            VStack {
                 HStack(spacing:0) {
                     VStack {
                         Text("Before")
@@ -17,6 +18,7 @@ struct CompareView: View {
                             .resizable()
                             .aspectRatio(contentMode: .fit)
                             .frame(width: geo.size.width / 2, alignment: .leading)
+                        Text("December 1, 2021")
                     }
                     VStack {
                         Text("After")
@@ -24,10 +26,15 @@ struct CompareView: View {
                             .resizable()
                             .aspectRatio(contentMode: .fit)
                             .frame(width: geo.size.width / 2, alignment: .trailing )
+                        Text("December 2, 2022")
                     }
                     
                 }
                 .padding(.top, 200)
+                Text("1 Year apart")
+                    .padding(.top)
+            }
+                
             
             
         }
