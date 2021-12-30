@@ -40,6 +40,18 @@ class GroupStore: ObservableObject {
             realm.delete(group)
         }
     }
+    func deleteGroupByIndex(index: Int) {
+        /*
+         This needs to use the id since if you pass in a task object as the paramter, realm wont know how to delete it. You have to find the realm object instead using the id. Then realm willl know how to delete that specific realm object
+         */
+        objectWillChange.send()
+        let realm = try! Realm()
+        guard let group = realm.object(ofType: Group.self, forPrimaryKey: groups[index].id)
+        else {return}
+        try! realm.write {
+            realm.delete(group)
+        }
+    }
     func addItem(notes: String, groupId: String, image: UIImage) {
         objectWillChange.send()
         let realm = try! Realm()

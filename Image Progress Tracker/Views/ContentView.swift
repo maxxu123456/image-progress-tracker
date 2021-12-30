@@ -12,6 +12,12 @@ struct ContentView: View {
     @State private var addingGroup = false
 
     @State private var groupName: String = ""
+    
+    private func deleteGroup(with indexSet: IndexSet){
+            indexSet.forEach ({ index in
+                db.deleteGroupByIndex(index: index)
+            })
+        }
     var body: some View {
         VStack{
             NavigationView {
@@ -33,8 +39,10 @@ struct ContentView: View {
                             
                             
                         }
+                        .onDelete(perform: deleteGroup)
                         
                     }
+                    
                     addingGroupButton
 
                 }
@@ -60,12 +68,4 @@ struct ContentView: View {
     }
 
    
-}
-
-
-
-struct ContentView_Previews: PreviewProvider {
-    static var previews: some View {
-        ContentView(db: GroupStore())
-    }
 }

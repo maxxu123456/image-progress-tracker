@@ -13,7 +13,7 @@ struct ItemsView: View {
     @EnvironmentObject var db: GroupStore
     var groupId: String
     private var group: Group {
-        db.groups.filter { $0.id == groupId }[0]
+        db.groups.filter { $0.id == groupId }.first!
     }
     
     var body: some View {
