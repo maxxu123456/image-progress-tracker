@@ -17,11 +17,12 @@ func saveJpg(_ image: UIImage) -> String {
 //    }
 //    return ""
     
-    let filename = generateRandomImageName()
+//    let filename = generateRandomImageName()
+    let filename = UUID().uuidString
     let jpgData = image.jpegData(compressionQuality: 0.5)
     let path = getDocumentsDirectory().appendingPathComponent(filename)
     try? jpgData?.write(to: path)
-    return generateRandomImageName()
+    return filename
 }
 
 func getDocumentsDirectory() -> URL {
@@ -48,6 +49,7 @@ class ImageSaver: NSObject {
 
 func getImageFromDocumentDirectory(fileName: String) -> UIImage {
     let data = try? Data(contentsOf: (getDocumentsDirectory().appendingPathComponent(fileName)))
+    print(data?.description)
     let image = UIImage(data: data!)
     return image!
 }
