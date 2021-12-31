@@ -19,7 +19,6 @@ struct ItemView: View {
         return item!
     }
     var body: some View {
-        let _ = print(itemId)
         Text(dateToString(date: item.dateCreated))
         GeometryReader { geo in
             Image(uiImage: getImageFromDocumentDirectory(fileName: item.imageFilename))

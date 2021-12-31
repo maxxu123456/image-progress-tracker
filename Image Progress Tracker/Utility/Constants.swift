@@ -8,6 +8,6 @@
 import Foundation
 
 struct Constants {
-    static let defaultSymbol = "mic"
+    static let defaultSymbol = "photo"
 }
 

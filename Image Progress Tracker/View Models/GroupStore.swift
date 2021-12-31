@@ -19,7 +19,6 @@ class GroupStore: ObservableObject {
         let realm = try! Realm()
         groupResults = realm.objects(Group.self)
     }
-    
     func addGroup(name: String, icon: String) {
         objectWillChange.send()
         let realm = try! Realm()
@@ -63,7 +62,6 @@ class GroupStore: ObservableObject {
             realm.add(item)
             
         }
-        print("notes:\(notes) | groupId: \(groupId)" )
     }
     func deleteItem(id: String) {
         objectWillChange.send()
@@ -77,6 +75,10 @@ class GroupStore: ObservableObject {
     func printRealmDirectory() {
         let realm = try! Realm()
         print(realm.configuration.fileURL!)
+    }
+    
+    func addTestImage(groupId: String) {
+        addItem(notes: "testNOTE", groupId: groupId, image: UIImage(named: "test1")!)
     }
 
 }

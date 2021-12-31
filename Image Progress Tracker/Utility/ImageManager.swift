@@ -43,13 +43,13 @@ class ImageSaver: NSObject {
     }
  
     @objc func saveError(_ image: UIImage, didFinishSavingWithError error: Error?, contextInfo: UnsafeRawPointer) {
-        print("Save finished!")
+//        print("Save finished!")
     }
 }
 
 func getImageFromDocumentDirectory(fileName: String) -> UIImage {
     let data = try? Data(contentsOf: (getDocumentsDirectory().appendingPathComponent(fileName)))
-    print(data?.description)
+//    print(data?.description)
     let image = UIImage(data: data!)
     return image!
 }
