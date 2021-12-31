@@ -8,9 +8,12 @@
 import SwiftUI
 
 struct CompareView: View {
+    @State private var selectingImages = false
+    @EnvironmentObject var db: GroupStore
     var body: some View {
         GeometryReader { geo in
             VStack {
+                selectForCompare
                 HStack(spacing:0) {
                     VStack {
                         Text("Before")
@@ -34,12 +37,23 @@ struct CompareView: View {
                 Text("1 Year apart")
                     .padding(.top)
             }
+            .sheet(isPresented: $selectingImages) {
+                CompareSelect().environmentObject(db)
+            }
                 
             
             
         }
         .padding()
             
+    }
+    var selectForCompare: some View {
+        Button(action: {selectingImages = true}, label: {
+            HStack{
+                Text("Select Images for Compare")
+                    .bold()
+            }
+        })
     }
 }
 

@@ -10,6 +10,7 @@ import Foundation
 
 struct ItemsView: View {
     @State private var addingItem = false
+    @State private var showingCompare = false
     @EnvironmentObject var db: GroupStore
     var groupId: String
     var name: String
@@ -21,57 +22,69 @@ struct ItemsView: View {
         if let group = group {
             
             VStack {
-//                addTestImage
-//                addTestImage1000
+                                addTestImage
+                //                addTestImage1000
                 ScrollView() {
                     if (group.items.count == 0) {
                         Text("Add an Item using the button above.")
                     } else {
-                        LazyVStack {
-                            ForEach(group.items){ item in
-                                HStack{
-                                    Spacer()
-                                    VStack {
-                                        let image = getImageFromDocumentDirectory(fileName: item.imageFilename)
-                                        Text(dateToString(date: item.dateCreated))
-                                        NavigationLink(destination: ItemView(itemId: item.id, groupId: groupId).environmentObject(db)) {
-                                            Image(uiImage: image)
-                                                .resizable()
-                                                .scaledToFill()
-                                                .frame(width: 200, height: 200, alignment: .center)
-                                                .clipped()
-                                                .cornerRadius(10)
-                                                .contextMenu {
-                                                    Button(action: {
-                                                        let imageSaver = ImageSaver()
-                                                        imageSaver.writeToPhotoAlbum(image: image)
-                                                    }) {
-                                                        HStack {
-                                                            Text("Save Image to Library")
-                                                            Image(systemName: "square.and.arrow.down")
-                                                        }
-                                                        
-                                                    }
-                                                    Button(role: .destructive, action: {
-                                                        withAnimation {
-                                                            db.deleteItem(id: item.id)
-                                                        }
-                                                    }) {
-                                                        HStack {
-                                                            Text("Delete")
-                                                            Image(systemName: "trash")
-                                                        }
-                                                        
-                                                    }
-                                                }
-                                            
-                                        }
+                        VStack {
+                            if (group.items.count >= 2) {
+                                VStack {
+                                    Button("Tap to compare images.") {
+                                        showingCompare = true
                                     }
-                                    Spacer()
+                                    NavigationLink(destination: CompareView().environmentObject(db), isActive: $showingCompare) { EmptyView() }
                                 }
                                 
                             }
+                            LazyVStack {
+                                ForEach(group.items){ item in
+                                    HStack{
+                                        Spacer()
+                                        VStack {
+                                            let image = getImageFromDocumentDirectory(fileName: item.imageFilename)
+                                            Text(dateToString(date: item.dateCreated))
+                                            NavigationLink(destination: ItemView(itemId: item.id, groupId: groupId).environmentObject(db)) {
+                                                Image(uiImage: image)
+                                                    .resizable()
+                                                    .scaledToFill()
+                                                    .frame(width: 200, height: 200, alignment: .center)
+                                                    .clipped()
+                                                    .cornerRadius(10)
+                                                    .contextMenu {
+                                                        Button(action: {
+                                                            let imageSaver = ImageSaver()
+                                                            imageSaver.writeToPhotoAlbum(image: image)
+                                                        }) {
+                                                            HStack {
+                                                                Text("Save Image to Library")
+                                                                Image(systemName: "square.and.arrow.down")
+                                                            }
+                                                            
+                                                        }
+                                                        Button(role: .destructive, action: {
+                                                            withAnimation {
+                                                                db.deleteItem(id: item.id)
+                                                            }
+                                                        }) {
+                                                            HStack {
+                                                                Text("Delete")
+                                                                Image(systemName: "trash")
+                                                            }
+                                                            
+                                                        }
+                                                    }
+                                                
+                                            }
+                                        }
+                                        Spacer()
+                                    }
+                                    
+                                }
+                            }
                         }
+                        
                         
                     }
                     
