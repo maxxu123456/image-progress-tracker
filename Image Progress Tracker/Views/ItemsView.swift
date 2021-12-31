@@ -21,7 +21,7 @@ struct ItemsView: View {
         if let group = group {
             
                     VStack {
-                        addTestImage
+//                        addTestImage
                             ScrollView() {
                                 if (group.items.count == 0) {
                                     Text("Add an Item using the button above.")
