@@ -47,9 +47,12 @@ class GroupStore: ObservableObject {
         let realm = try! Realm()
         guard let group = realm.object(ofType: Group.self, forPrimaryKey: groups[index].id)
         else {return}
+        let items = group.items
         try! realm.write {
+            realm.delete(items)
             realm.delete(group)
         }
+
     }
     func addItem(notes: String, groupId: String, image: UIImage) {
         objectWillChange.send()
