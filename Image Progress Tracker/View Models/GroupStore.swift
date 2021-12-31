@@ -14,6 +14,7 @@ class GroupStore: ObservableObject {
     //Need to create a array copy of taskResults since in a Results collection, realm marks deleted objects as invalid. ForEach maintains the list of object before deleteion in its memeory to make loading easier, but this means it accesses the objet after it is deleted. Thus ForEach must use the Array copy "tasks".
     var groups: [Group] {
         groupResults.map(Group.init)
+        
     }
     init() {
         let realm = try! Realm()
@@ -52,7 +53,7 @@ class GroupStore: ObservableObject {
             realm.delete(items)
             realm.delete(group)
         }
-
+        
     }
     func addItem(notes: String, groupId: String, image: UIImage) {
         objectWillChange.send()
@@ -83,5 +84,5 @@ class GroupStore: ObservableObject {
     func addTestImage(groupId: String) {
         addItem(notes: "testNOTE", groupId: groupId, image: UIImage(named: "test1")!)
     }
-
+    
 }

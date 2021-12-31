@@ -10,35 +10,53 @@ import SwiftUI
 struct CompareView: View {
     @State private var selectingImages = false
     @EnvironmentObject var db: GroupStore
+    @State private var selected: [Item]
+    var group: Group
+    
+    init(group: Group) {
+        self.group = group
+        //Assigns first most recent two images to be default for selected
+        let firstTwoImagesByDateDescending = self.group.items.sorted(by: {$0.dateCreated.compare($1.dateCreated) == .orderedDescending})[0...1]
+        var selectedItems: [Item] = []
+        selectedItems.append(firstTwoImagesByDateDescending[0])
+        selectedItems.append(firstTwoImagesByDateDescending[1])
+        selected = selectedItems
+    }
     var body: some View {
         GeometryReader { geo in
             VStack {
                 selectForCompare
-                HStack(spacing:0) {
-                    VStack {
-                        Text("Before")
-                        Image("test1")
-                            .resizable()
-                            .aspectRatio(contentMode: .fit)
-                            .frame(width: geo.size.width / 2, alignment: .leading)
-                        Text("December 1, 2021")
+                if(selected.count == 2) {
+                    HStack(spacing:0) {
+                        VStack {
+                            let image = getImageFromDocumentDirectory(fileName: selected[0].imageFilename)
+
+                            Text("Before")
+                            Image(uiImage: image)
+                                .resizable()
+                                .aspectRatio(contentMode: .fit)
+                                .frame(width: geo.size.width / 2, alignment: .leading)
+                            Text(dateToString(date: selected[0].dateCreated))
+                        }
+                        VStack {
+                            let image = getImageFromDocumentDirectory(fileName: selected[1].imageFilename)
+                            Text("After")
+                            Image(uiImage: image)
+                                .resizable()
+                                .aspectRatio(contentMode: .fit)
+                                .frame(width: geo.size.width / 2, alignment: .trailing )
+                            Text(dateToString(date: selected[1].dateCreated))
+                        }
+                        
                     }
-                    VStack {
-                        Text("After")
-                        Image("test2")
-                            .resizable()
-                            .aspectRatio(contentMode: .fit)
-                            .frame(width: geo.size.width / 2, alignment: .trailing )
-                        Text("December 2, 2022")
-                    }
-                    
+                    .padding(.top, 200)
                 }
-                .padding(.top, 200)
-                Text("1 Year apart")
-                    .padding(.top)
+                
+//                Text("1 Year apart")
+//                    .padding(.top)
             }
             .sheet(isPresented: $selectingImages) {
-                CompareSelect().environmentObject(db)
+                CompareSelect(items: Array(group.items), selectedConstant: Array(selected), selected: $selected ).environmentObject(db)
             }
                 
             
@@ -57,8 +75,8 @@ struct CompareView: View {
     }
 }
 
-struct CompareView_Previews: PreviewProvider {
-    static var previews: some View {
-        CompareView()
-    }
-}
+//struct CompareView_Previews: PreviewProvider {
+//    static var previews: some View {
+//        CompareView()
+//    }
+//}

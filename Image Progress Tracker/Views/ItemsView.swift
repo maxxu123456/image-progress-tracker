@@ -34,12 +34,12 @@ struct ItemsView: View {
                                     Button("Tap to compare images.") {
                                         showingCompare = true
                                     }
-                                    NavigationLink(destination: CompareView().environmentObject(db), isActive: $showingCompare) { EmptyView() }
+                                    NavigationLink(destination: CompareView(group: group).environmentObject(db), isActive: $showingCompare) { EmptyView() }
                                 }
                                 
                             }
                             LazyVStack {
-                                ForEach(group.items){ item in
+                                ForEach(group.items.sorted(by: {$0.dateCreated.compare($1.dateCreated) == .orderedDescending})){ item in
                                     HStack{
                                         Spacer()
                                         VStack {
