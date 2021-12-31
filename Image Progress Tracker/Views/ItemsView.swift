@@ -20,76 +20,80 @@ struct ItemsView: View {
     var body: some View {
         if let group = group {
             
-                    VStack {
-//                        addTestImage
-                            ScrollView() {
-                                if (group.items.count == 0) {
-                                    Text("Add an Item using the button above.")
-                                } else {
-                                    ForEach(group.items) { item in
-                                        HStack{
-                                            Spacer()
-                                            VStack {
-                                                let image = getImageFromDocumentDirectory(fileName: item.imageFilename)
-                                                Text(dateToString(date: item.dateCreated))
-                                                NavigationLink(destination: ItemView(itemId: item.id, groupId: groupId).environmentObject(db)) {
-                                                    Image(uiImage: image)
-                                                        .resizable()
-                                                        .scaledToFill()
-                                                        .frame(width: 200, height: 200, alignment: .center)
-                                                        .clipped()
-                                                        .cornerRadius(10)
-                                                        .contextMenu {
-                                                            Button(action: {
-                                                                let imageSaver = ImageSaver()
-                                                                imageSaver.writeToPhotoAlbum(image: image)
-                                                            }) {
-                                                                HStack {
-                                                                    Text("Save Image to Library")
-                                                                    Image(systemName: "square.and.arrow.down")
-                                                                }
-            
-                                                            }
-                                                            Button(role: .destructive, action: {
-                                                                withAnimation {
-                                                                    db.deleteItem(id: item.id)
-                                                                }
-                                                            }) {
-                                                                HStack {
-                                                                    Text("Delete")
-                                                                    Image(systemName: "trash")
-                                                                }
-            
-                                                            }
+            VStack {
+//                addTestImage
+//                addTestImage1000
+                ScrollView() {
+                    if (group.items.count == 0) {
+                        Text("Add an Item using the button above.")
+                    } else {
+                        LazyVStack {
+                            ForEach(group.items){ item in
+                                HStack{
+                                    Spacer()
+                                    VStack {
+                                        let image = getImageFromDocumentDirectory(fileName: item.imageFilename)
+                                        Text(dateToString(date: item.dateCreated))
+                                        NavigationLink(destination: ItemView(itemId: item.id, groupId: groupId).environmentObject(db)) {
+                                            Image(uiImage: image)
+                                                .resizable()
+                                                .scaledToFill()
+                                                .frame(width: 200, height: 200, alignment: .center)
+                                                .clipped()
+                                                .cornerRadius(10)
+                                                .contextMenu {
+                                                    Button(action: {
+                                                        let imageSaver = ImageSaver()
+                                                        imageSaver.writeToPhotoAlbum(image: image)
+                                                    }) {
+                                                        HStack {
+                                                            Text("Save Image to Library")
+                                                            Image(systemName: "square.and.arrow.down")
                                                         }
-            
+                                                        
+                                                    }
+                                                    Button(role: .destructive, action: {
+                                                        withAnimation {
+                                                            db.deleteItem(id: item.id)
+                                                        }
+                                                    }) {
+                                                        HStack {
+                                                            Text("Delete")
+                                                            Image(systemName: "trash")
+                                                        }
+                                                        
+                                                    }
                                                 }
-                                            }
-                                            Spacer()
+                                            
                                         }
-            
                                     }
+                                    Spacer()
                                 }
-            
+                                
                             }
-                            .navigationTitle(group.name)
-                            .navigationBarTitleDisplayMode(.inline)
-                            .toolbar {
-                                ToolbarItem(placement:.navigationBarTrailing) {
-                                    addingItemButton
-            
-                                }
-                            }
-            
-            
-            
+                        }
+                        
                     }
-                    .sheet(isPresented: $addingItem, content: {
-                        AddingItemForm(groupId: group.id).environmentObject(db)
-                    })
+                    
+                }
+                .navigationTitle(group.name)
+                .navigationBarTitleDisplayMode(.inline)
+                .toolbar {
+                    ToolbarItem(placement:.navigationBarTrailing) {
+                        addingItemButton
+                        
+                    }
+                }
+                
+                
+                
+            }
+            .sheet(isPresented: $addingItem, content: {
+                AddingItemForm(groupId: group.id).environmentObject(db)
+            })
             
         }
- 
+        
     }
     var addingItemButton: some View {
         Button(action: {addingItem = true}, label: {
@@ -100,6 +104,14 @@ struct ItemsView: View {
     }
     var addTestImage: some View {
         Button(action: {db.addTestImage(groupId: groupId)}, label: {
+            HStack{
+                Text("Add Test Image")
+                    .bold()
+            }.foregroundColor(.green)
+        }).padding()
+    }
+    var addTestImage1000: some View {
+        Button(action: {for _ in 1...1000 {db.addTestImage(groupId: groupId)}}, label: {
             HStack{
                 Text("Add Test Image")
                     .bold()
