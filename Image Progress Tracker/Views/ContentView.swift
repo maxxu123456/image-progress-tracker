@@ -19,46 +19,59 @@ struct ContentView: View {
         })
     }
     var body: some View {
-        VStack{
-            NavigationView {
-                VStack {
-                    List {
-                        
-                        ForEach(db.groups) { group in
-                            NavigationLink(destination: ItemsView(groupId: group.id,name: group.name).environmentObject(db)) {
-                                HStack{
-                                    let _ = db.printRealmDirectory()
-                                    Image(systemName: group.icon)
-                                    Text(group.name)
-                                    Text(String(group.items.count) + " items")
-                                        .fontWeight(.light)
-                                        .font(.subheadline)
-                                        .foregroundColor(.gray)
+
+            VStack{
+                NavigationView {
+                    VStack {
+                        VStack {
+                            if(db.groups.count == 0) {
+                                Text("Add a Group using the button below.")
+
+                            } else {
+                                List {
+                                    
+                                    ForEach(db.groups) { group in
+                                        NavigationLink(destination: ItemsView(groupId: group.id,name: group.name).environmentObject(db)) {
+                                            HStack{
+                                                let _ = db.printRealmDirectory()
+                                                Image(systemName: group.icon)
+                                                Text(group.name)
+                                                Text(String(group.items.count) + " items")
+                                                    .fontWeight(.light)
+                                                    .font(.subheadline)
+                                                    .foregroundColor(.gray)
+                                                
+                                            }
+                                        }
+                                        
+                                        
+                                    }
+                                    .onDelete(perform: deleteGroup)
                                     
                                 }
                             }
                             
                             
-                        }
-                        .onDelete(perform: deleteGroup)
+                        }.navigationTitle("Groups")
+                        
+                        Spacer()
+                        
+                        addingGroupButton
+
+                        
                         
                     }
-                    
-                    
-                    .navigationTitle("Groups")
-                    addingGroupButton
-                    
                 }
                 
+                
+                
+                
             }
-            
-            
-            
-            
-        }
-        .sheet(isPresented: $addingGroup) {
-            AddingGroupForm().environmentObject(db)
-        }
+            .sheet(isPresented: $addingGroup) {
+                AddingGroupForm().environmentObject(db)
+            }
+        
+        
         
         
     }
