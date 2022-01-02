@@ -25,35 +25,46 @@ struct CompareView: View {
     var body: some View {
         GeometryReader { geo in
             VStack {
-                selectForCompare
+                Spacer()
                 if(selected.count == 2) {
-                    HStack(spacing:0) {
-                        VStack {
-                            let image = getImageFromDocumentDirectory(fileName: selected[0].imageFilename)
+                    VStack {
+                        HStack(spacing:0) {
+                            VStack {
+                                let image = getImageFromDocumentDirectory(fileName: selected[0].imageFilename)
 
-                            Text("Before")
-                            Image(uiImage: image)
-                                .resizable()
-                                .aspectRatio(contentMode: .fit)
-                                .frame(width: geo.size.width / 2, alignment: .leading)
-                            Text(dateToString(date: selected[0].dateCreated))
+                                Text("Before")
+                                Image(uiImage: image)
+                                    .resizable()
+                                    .aspectRatio(contentMode: .fit)
+                                    .frame(width: geo.size.width / 2, alignment: .leading)
+                                Text(dateToString(date: selected[0].dateCreated))
+                            }
+                            VStack {
+                                let image = getImageFromDocumentDirectory(fileName: selected[1].imageFilename)
+                                Text("After")
+                                Image(uiImage: image)
+                                    .resizable()
+                                    .aspectRatio(contentMode: .fit)
+                                    .frame(width: geo.size.width / 2, alignment: .trailing )
+                                Text(dateToString(date: selected[1].dateCreated))
+                            }
+                            
                         }
-                        VStack {
-                            let image = getImageFromDocumentDirectory(fileName: selected[1].imageFilename)
-                            Text("After")
-                            Image(uiImage: image)
-                                .resizable()
-                                .aspectRatio(contentMode: .fit)
-                                .frame(width: geo.size.width / 2, alignment: .trailing )
-                            Text(dateToString(date: selected[1].dateCreated))
-                        }
-                        
+                        Text(String(daysBetween(start: selected[0].dateCreated,end: selected[1].dateCreated)) + " days apart.").padding(.top)
                     }
-                    .padding(.top, 200)
+                    
                 }
-                
+                Spacer()
 //                Text("1 Year apart")
 //                    .padding(.top)
+            }
+            .navigationTitle("Compare")
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                ToolbarItem(placement:.navigationBarTrailing) {
+                    selectForCompare
+                    
+                }
             }
             .sheet(isPresented: $selectingImages) {
                 CompareSelect(items: Array(group.items), selectedConstant: Array(selected), selected: $selected ).environmentObject(db)
@@ -62,17 +73,16 @@ struct CompareView: View {
             
             
         }
-        .padding()
             
     }
     var selectForCompare: some View {
         Button(action: {selectingImages = true}, label: {
             HStack{
-                Text("Select Images for Compare")
-                    .bold()
+                Image(systemName: "square.stack")
             }
         })
     }
+
 }
 
 //struct CompareView_Previews: PreviewProvider {

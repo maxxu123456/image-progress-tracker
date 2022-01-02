@@ -52,6 +52,7 @@ struct AddingGroupForm: View {
                     }, label: {
                         Text("Save")
                     })
+                        .disabled(groupName == "")
                 }
             }
         }

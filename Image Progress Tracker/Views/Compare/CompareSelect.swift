@@ -49,8 +49,6 @@ struct CompareSelect: View {
                 .toolbar {
                     ToolbarItem(placement: .navigationBarLeading) {
                         Button(action: {
-                            let a = print("****SELECTED: \(selected) ******")
-                            let b = print("****SELECTED CONSTANT: \(selectedConstant) ******")
                             selected = selectedConstant
                             presentationMode.wrappedValue.dismiss()
                         }, label: {

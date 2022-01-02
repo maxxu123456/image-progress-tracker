@@ -14,3 +14,7 @@ func dateToString(date: Date) -> String {
     dateFormatter.locale = Locale(identifier: "en_US")
     return dateFormatter.string(from: date)
 }
+
+func daysBetween(start: Date, end: Date) -> Int {
+        return Calendar.current.dateComponents([.day], from: start, to: end).day!
+}

@@ -11,21 +11,40 @@ import SwiftUI
 
 struct ItemView: View {
     @EnvironmentObject var db: GroupStore
-    var itemId: String
-    var groupId: String
-    var item: Item {
-        let group = db.groups.first(where: { $0.id == groupId })
-        let item = group!.items.first(where: { $0.id == itemId })
-        return item!
-    }
+    @Environment(\.presentationMode) var presentationMode
+    var item: Item
     var body: some View {
-        Text(dateToString(date: item.dateCreated))
-        GeometryReader { geo in
-            Image(uiImage: getImageFromDocumentDirectory(fileName: item.imageFilename))
-                .resizable()
-                .aspectRatio(contentMode: .fit)
-                .frame(width: geo.size.width)
+
+            VStack{
+                Text(dateToString(date: item.dateCreated))
+                GeometryReader { geo in
+                    Image(uiImage: getImageFromDocumentDirectory(fileName: item.imageFilename))
+                        .resizable()
+                        .aspectRatio(contentMode: .fit)
+                        .frame(width: geo.size.width)
+                }
+                if (item.notes != "") {
+                    Text("Notes: \(item.notes)")
+                }
+            }
+            .toolbar {
+
+                ToolbarItem(placement: .bottomBar) {
+                    HStack {
+                        Button(action: {
+                            let imageSaver = ImageSaver()
+                            imageSaver.writeToPhotoAlbum(image: getImageFromDocumentDirectory(fileName: item.imageFilename))
+                        }) {
+                            Image(systemName: "square.and.arrow.down")
+
+                    }
+                        Spacer()
+                    }
+                    
+            }
+            
         }
-        Text("Notes: \(item.notes)")
-    }
+        
+        
+}
 }

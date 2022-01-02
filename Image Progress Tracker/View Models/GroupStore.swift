@@ -67,6 +67,12 @@ class GroupStore: ObservableObject {
             
         }
     }
+    func getItem(id: String) -> Item? {
+        objectWillChange.send()
+        let realm = try! Realm()
+        let item = realm.object(ofType: Item.self, forPrimaryKey: id)
+        return item
+    }
     func deleteItem(id: String) {
         objectWillChange.send()
         let realm = try! Realm()
@@ -82,7 +88,7 @@ class GroupStore: ObservableObject {
     }
     
     func addTestImage(groupId: String) {
-        addItem(notes: "testNOTE", groupId: groupId, image: UIImage(named: "test1")!)
+        addItem(notes: "a;sdlfkdffja;sldkfja;sdlkfj;alskdjf;aklsdjfpaosijefpwqoiefjpqwoiefjqpwoeifjdjfaosidjfaoipsdjfpoaisdjfopajdisjfapoidjsfioajsdfioajsdfpaoisjdfaopisdjfpaoisjdfpaoisdjfaiosjdfpioasdjfpioasdjfpaisdf", groupId: groupId, image: UIImage(named: "test1")!)
     }
     
 }

@@ -22,22 +22,24 @@ struct ItemsView: View {
         if let group = group {
             
             VStack {
-                                addTestImage
+                if (group.items.count >= 2) {
+                    VStack {
+                        Button(action: {showingCompare = true} ) {
+                            Label("Before vs. After", systemImage: "square.on.square")
+                        }
+                        .padding()
+                        NavigationLink(destination: CompareView(group: group).environmentObject(db), isActive: $showingCompare) { EmptyView() }
+                    }
+                    
+                }
+//                                addTestImage
                 //                addTestImage1000
                 ScrollView() {
                     if (group.items.count == 0) {
                         Text("Add an Item using the button above.")
                     } else {
                         VStack {
-                            if (group.items.count >= 2) {
-                                VStack {
-                                    Button("Tap to compare images.") {
-                                        showingCompare = true
-                                    }
-                                    NavigationLink(destination: CompareView(group: group).environmentObject(db), isActive: $showingCompare) { EmptyView() }
-                                }
-                                
-                            }
+
                             LazyVStack {
                                 ForEach(group.items.sorted(by: {$0.dateCreated.compare($1.dateCreated) == .orderedDescending})){ item in
                                     HStack{
@@ -45,7 +47,7 @@ struct ItemsView: View {
                                         VStack {
                                             let image = getImageFromDocumentDirectory(fileName: item.imageFilename)
                                             Text(dateToString(date: item.dateCreated))
-                                            NavigationLink(destination: ItemView(itemId: item.id, groupId: groupId).environmentObject(db)) {
+                                            NavigationLink(destination: ItemView(item: item).environmentObject(db)) {
                                                 Image(uiImage: image)
                                                     .resizable()
                                                     .scaledToFill()
@@ -64,9 +66,10 @@ struct ItemsView: View {
                                                             
                                                         }
                                                         Button(role: .destructive, action: {
-                                                            withAnimation {
+                                                            withAnimation(.easeOut) {
                                                                 db.deleteItem(id: item.id)
                                                             }
+                                        
                                                         }) {
                                                             HStack {
                                                                 Text("Delete")
