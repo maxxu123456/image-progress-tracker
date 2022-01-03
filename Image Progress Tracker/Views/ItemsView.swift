@@ -32,7 +32,7 @@ struct ItemsView: View {
                     }
                     
                 }
-//                                addTestImage
+                                addTestImage
                 //                addTestImage1000
                 ScrollView() {
                     if (group.items.count == 0) {
@@ -40,7 +40,7 @@ struct ItemsView: View {
                     } else {
                         VStack {
 
-                            LazyVStack {
+                            VStack {
                                 ForEach(group.items.sorted(by: {$0.dateCreated.compare($1.dateCreated) == .orderedDescending})){ item in
                                     HStack{
                                         Spacer()
