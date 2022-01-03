@@ -55,12 +55,12 @@ class GroupStore: ObservableObject {
         }
         
     }
-    func addItem(notes: String, groupId: String, image: UIImage) {
+    func addItem(notes: String, groupId: String, image: UIImage, date: Date) {
         objectWillChange.send()
         let realm = try! Realm()
         guard let group = realm.object(ofType: Group.self, forPrimaryKey: groupId)
         else {return}
-        let item = Item(imageFilename: saveJpg(image), notes: notes)
+        let item = Item(imageFilename: saveJpg(image), notes: notes, date: date)
         try! realm.write {
             group.items.append(item)
             realm.add(item)
@@ -87,8 +87,8 @@ class GroupStore: ObservableObject {
         print(realm.configuration.fileURL!)
     }
     
-    func addTestImage(groupId: String) {
-        addItem(notes: "a;sdlfkdffja;sldkfja;sdlkfj;alskdjf;aklsdjfpaosijefpwqoiefjpqwoiefjqpwoeifjdjfaosidjfaoipsdjfpoaisdjfopajdisjfapoidjsfioajsdfioajsdfpaoisjdfaopisdjfpaoisjdfpaoisdjfaiosjdfpioasdjfpioasdjfpaisdf", groupId: groupId, image: UIImage(named: "test1")!)
+    func addTestImage(groupId: String, imageName: String, date: Date) {
+        addItem(notes: "a;sdlfkdffja;sldkfja;sdlkfj;alskdjf;aklsdjfpaosijefpwqoiefjpqwoiefjqpwoeifjdjfaosidjfaoipsdjfpoaisdjfopajdisjfapoidjsfioajsdfioajsdfpaoisjdfaopisdjfpaoisjdfpaoisdjfaiosjdfpioasdjfpioasdjfpaisdf", groupId: groupId, image: UIImage(named: imageName)!, date: date)
     }
     
 }

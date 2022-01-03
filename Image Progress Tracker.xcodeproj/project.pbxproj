@@ -25,6 +25,7 @@
 		9A97A7E226C4B097003E6BA0 /* GroupStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A97A7E126C4B097003E6BA0 /* GroupStore.swift */; };
 		9AA07F38277CDD8E00774619 /* CompareSelect.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9AA07F37277CDD8E00774619 /* CompareSelect.swift */; };
 		9AA07F5C2782BA6700774619 /* Info.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9AA07F5B2782BA6600774619 /* Info.swift */; };
+		9AA07F60278397B300774619 /* Launch Screen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 9AA07F5F278397B200774619 /* Launch Screen.storyboard */; };
 		9AD52EA726D1D54A0026D57C /* ImageManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9AD52EA626D1D54A0026D57C /* ImageManager.swift */; };
 		9AE455DB26C8B4FD00AF5179 /* ItemsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9AE455DA26C8B4FD00AF5179 /* ItemsView.swift */; };
 		9AE455DF26C8BF5B00AF5179 /* AddingGroupForm.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9AE455DE26C8BF5B00AF5179 /* AddingGroupForm.swift */; };
@@ -51,6 +52,7 @@
 		9A97A7E126C4B097003E6BA0 /* GroupStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GroupStore.swift; sourceTree = "<group>"; };
 		9AA07F37277CDD8E00774619 /* CompareSelect.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CompareSelect.swift; sourceTree = "<group>"; };
 		9AA07F5B2782BA6600774619 /* Info.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Info.swift; sourceTree = "<group>"; };
+		9AA07F5F278397B200774619 /* Launch Screen.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = "Launch Screen.storyboard"; sourceTree = "<group>"; };
 		9AD52EA626D1D54A0026D57C /* ImageManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageManager.swift; sourceTree = "<group>"; };
 		9AE455DA26C8B4FD00AF5179 /* ItemsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ItemsView.swift; sourceTree = "<group>"; };
 		9AE455DE26C8BF5B00AF5179 /* AddingGroupForm.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddingGroupForm.swift; sourceTree = "<group>"; };
@@ -109,6 +111,7 @@
 				9A97A7CA26C37B47003E6BA0 /* Assets.xcassets */,
 				9A97A7CF26C37B47003E6BA0 /* Info.plist */,
 				9A97A7CC26C37B47003E6BA0 /* Preview Content */,
+				9AA07F5F278397B200774619 /* Launch Screen.storyboard */,
 			);
 			path = "Image Progress Tracker";
 			sourceTree = "<group>";
@@ -228,6 +231,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				9AA07F60278397B300774619 /* Launch Screen.storyboard in Resources */,
 				9A97A7CE26C37B47003E6BA0 /* Preview Assets.xcassets in Resources */,
 				9A97A7CB26C37B47003E6BA0 /* Assets.xcassets in Resources */,
 			);

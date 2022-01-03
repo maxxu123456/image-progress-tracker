@@ -57,7 +57,7 @@ struct AddingItemForm: View {
                 ToolbarItem(placement:.navigationBarTrailing) {
                     if let validImage = image {
                         Button(action: {
-                            db.addItem(notes: notes, groupId: groupId,image: validImage)
+                            db.addItem(notes: notes, groupId: groupId,image: validImage, date: Date())
                             notes = ""
                             image = nil
                             inputImage = nil

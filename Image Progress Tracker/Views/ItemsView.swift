@@ -32,8 +32,8 @@ struct ItemsView: View {
                     }
                     
                 }
-                                addTestImage
-                //                addTestImage1000
+//                                addTestImage
+//                addOneImage
                 ScrollView() {
                     if (group.items.count == 0) {
                         Text("Add an Item using the button above.")
@@ -119,20 +119,43 @@ struct ItemsView: View {
         }).padding()
     }
     var addTestImage: some View {
-        Button(action: {db.addTestImage(groupId: groupId)}, label: {
+        Button(action: {
+            let formatter = DateFormatter()
+            formatter.dateFormat = "yyyy/MM/dd HH:mm"
+            let test1 = formatter.date(from: "2021/12/08 22:31")
+            let test2 = formatter.date(from: "2021/12/10 22:31")
+            let test3 = formatter.date(from: "2021/12/14 22:31")
+            let test4 = formatter.date(from: "2021/12/20 22:31")
+            let test5 = formatter.date(from: "2021/12/31 22:31")
+
+            db.addTestImage(groupId: groupId, imageName: "test1", date: test1!)
+            db.addTestImage(groupId: groupId, imageName: "test2", date: test2!)
+            db.addTestImage(groupId: groupId, imageName: "test3", date: test3!)
+            db.addTestImage(groupId: groupId, imageName: "test4", date: test4!)
+            db.addTestImage(groupId: groupId, imageName: "test5", date: test5!)
+
+            
+
+        }, label: {
             HStack{
                 Text("Add Test Image")
                     .bold()
             }.foregroundColor(.green)
         }).padding()
     }
-    var addTestImage1000: some View {
-        Button(action: {for _ in 1...1000 {db.addTestImage(groupId: groupId)}}, label: {
+    var addOneImage: some View {
+        Button(action: {
+
+
+            db.addTestImage(groupId: groupId, imageName: "test1", date: Date())
+
+
+        }, label: {
             HStack{
-                Text("Add Test Image")
+                Text("Add One Image")
                     .bold()
             }.foregroundColor(.green)
         }).padding()
     }
-    
+
 }

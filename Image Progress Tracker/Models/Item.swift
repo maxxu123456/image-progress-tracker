@@ -14,10 +14,10 @@ class Item: Object, Identifiable {
     @Persisted var dateCreated: Date
     @Persisted(primaryKey: true) var id = UUID().uuidString
 //    @Persisted(originProperty: "items") var assignee: LinkingObjects<Group>
-    convenience init(imageFilename: String, notes: String) {
+    convenience init(imageFilename: String, notes: String, date: Date) {
         self.init()
         self.imageFilename = imageFilename
         self.notes = notes
-        self.dateCreated = Date()
+        self.dateCreated = date
     }
 }
