@@ -4,6 +4,8 @@
 <dict>
 	<key>CFBundleDevelopmentRegion</key>
 	<string>$(DEVELOPMENT_LANGUAGE)</string>
+	<key>CFBundleDisplayName</key>
+	<string>PictureTrack</string>
 	<key>CFBundleExecutable</key>
 	<string>$(EXECUTABLE_NAME)</string>
 	<key>CFBundleIdentifier</key>
@@ -23,7 +25,7 @@
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
 	<key>NSCameraUsageDescription</key>
-	<string>Allows the app to take a photo.</string>
+	<string>This app requires access to the camera in order to take photos and save them them to the group.</string>
 	<key>NSPhotoLibraryAddUsageDescription</key>
 	<string>The photo is added to the user&apos;s photo library.</string>
 	<key>UIApplicationSceneManifest</key>
