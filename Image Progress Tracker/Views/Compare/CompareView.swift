@@ -18,8 +18,8 @@ struct CompareView: View {
         //Assigns first most recent two images to be default for selected
         let firstTwoImagesByDateDescending = self.group.items.sorted(by: {$0.dateCreated.compare($1.dateCreated) == .orderedDescending})[0...1]
         var selectedItems: [Item] = []
-        selectedItems.append(firstTwoImagesByDateDescending[0])
         selectedItems.append(firstTwoImagesByDateDescending[1])
+        selectedItems.append(firstTwoImagesByDateDescending[0])
         selected = selectedItems
     }
     var body: some View {
