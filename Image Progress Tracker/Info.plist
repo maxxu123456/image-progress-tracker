@@ -17,7 +17,7 @@
 	<key>CFBundlePackageType</key>
 	<string>$(PRODUCT_BUNDLE_PACKAGE_TYPE)</string>
 	<key>CFBundleShortVersionString</key>
-	<string>1.0</string>
+	<string>$(MARKETING_VERSION)</string>
 	<key>CFBundleVersion</key>
 	<string>1</string>
 	<key>LSApplicationCategoryType</key>
@@ -27,7 +27,7 @@
 	<key>NSCameraUsageDescription</key>
 	<string>This app requires access to the camera in order to take photos and save them them to the group.</string>
 	<key>NSPhotoLibraryAddUsageDescription</key>
-	<string>The photo is added to the user&apos;s photo library.</string>
+	<string>The photo is added to the user's photo library.</string>
 	<key>UIApplicationSceneManifest</key>
 	<dict>
 		<key>UIApplicationSupportsMultipleScenes</key>
