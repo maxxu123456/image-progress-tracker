@@ -3,6 +3,8 @@
 # Xcode user-specific files
 xcuserdata/
 *.xcuserstate
+*.xcscmblueprint
+.xccheckout
 
 # Local build products
 DerivedData/
@@ -18,3 +20,8 @@ build/
 # Temporary editor/system files
 *.swp
 *.swo
+*~
+
+# Local editor settings
+.idea/
+.vscode/
