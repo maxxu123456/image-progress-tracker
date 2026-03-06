@@ -1,97 +1,76 @@
-//
-//  CompareSelect.swift
-//  Image Progress Tracker
-//
-//  Created by Max Xu on 12/29/21.
-//
-
 import SwiftUI
 
 struct CompareSelect: View {
-    var columns = [GridItem(.flexible()), GridItem(.flexible()), GridItem(.flexible())]
-    @Environment(\.presentationMode) var presentationMode
-    var items: [Item]
-    @State var selectedConstant: [Item]
-    @Binding var selected: [Item]
+    private let columns = [GridItem(.flexible()), GridItem(.flexible()), GridItem(.flexible())]
+    @Environment(\.dismiss) private var dismiss
+    var items: [TrackerItem]
+    @State var selectedConstant: [TrackerItem]
+    @Binding var selected: [TrackerItem]
+
     var body: some View {
-        NavigationView {
+        NavigationStack {
             GeometryReader { geo in
-                LazyVGrid(columns: columns) {
-                    ForEach(items.sorted(by: {$0.dateCreated.compare($1.dateCreated) == .orderedDescending})) { item in
-                        let image = getImageFromDocumentDirectory(fileName: item.imageFilename)
-                        Image(uiImage: image)
-                            .resizable()
-                            .scaledToFill()
-                            .frame(width: geo.size.width/3.5, height: geo.size.width/3.5, alignment: .center)
-                            .clipped()
-                            .cornerRadius(10)
-                            .imageSelected(condition: selected.contains(item))
-                            .onTapGesture {
-                                if(!selected.contains(item) && selected.count < 2) {
-                                    if(selected.count == 0) {
-                                        selected.append(item)
-                                    } else if(item.dateCreated < selected[0].dateCreated) {
-                                        selected.insert(item, at: 0)
-                                    } else {
-                                        selected.append(item)
-                                    }
-                                } else if(selected.contains(item)) {
-                                    if let index = selected.firstIndex(of: item) {
-                                        selected.remove(at: index)
+                ScrollView {
+                    LazyVGrid(columns: columns) {
+                        ForEach(items.sorted(by: { $0.dateCreated > $1.dateCreated }), id: \.id) { item in
+                            let isSelected = selected.contains(where: { $0.id == item.id })
+                            AsyncThumbnail(filename: item.imageFilename, maxDimension: 300)
+                                .scaledToFill()
+                                .frame(width: geo.size.width / 3.5, height: geo.size.width / 3.5, alignment: .center)
+                                .clipped()
+                                .cornerRadius(10)
+                                .imageSelected(condition: isSelected)
+                                .onTapGesture {
+                                    if !isSelected && selected.count < 2 {
+                                        if selected.isEmpty {
+                                            selected.append(item)
+                                        } else if item.dateCreated < selected[0].dateCreated {
+                                            selected.insert(item, at: 0)
+                                        } else {
+                                            selected.append(item)
+                                        }
+                                    } else if isSelected {
+                                        selected.removeAll(where: { $0.id == item.id })
                                     }
                                 }
-                            }
+                        }
                     }
                 }
-            }.padding()
-                .navigationTitle("Select Two Photos to compare.")
-                .navigationBarTitleDisplayMode(.inline)
-                .toolbar {
-                    ToolbarItem(placement: .navigationBarLeading) {
-                        Button(action: {
-                            selected = selectedConstant
-                            presentationMode.wrappedValue.dismiss()
-                        }, label: {
-                            Text("Exit")
-                        })
-                    }
-                    ToolbarItem(placement:.navigationBarTrailing) {
-                        Button(action: {
-                            presentationMode.wrappedValue.dismiss()
-                        }, label: {
-                            Text("Save")
-                        })
-                            .disabled(selected.count != 2)
+            }
+            .padding()
+            .navigationTitle("Select Two Photos")
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                ToolbarItem(placement: .cancellationAction) {
+                    Button("Cancel") {
+                        selected = selectedConstant
+                        dismiss()
                     }
                 }
+                ToolbarItem(placement: .confirmationAction) {
+                    Button("Save") {
+                        dismiss()
+                    }
+                    .disabled(selected.count != 2)
+                }
+            }
         }
-
-
-
-
-
-        
-        
     }
 }
 
-//struct CompareSelect_Previews: PreviewProvider {
-//    static var previews: some View {
-//        CompareSelect()
-//    }
-//}
-
 struct SelectImage: ViewModifier {
     var isSelected: Bool
+
     func body(content: Content) -> some View {
-        if(isSelected) {
+        if isSelected {
             content
-                .overlay(RoundedRectangle(cornerRadius: 10)
-                            .strokeBorder(Color.accentColor, lineWidth: 4))
+                .overlay(
+                    RoundedRectangle(cornerRadius: 10)
+                        .strokeBorder(Color.accentColor, lineWidth: 4)
+                )
         } else {
             content
         }
-        
     }
 }
 

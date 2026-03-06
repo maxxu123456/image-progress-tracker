@@ -3,11 +3,10 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 52;
+	objectVersion = 50;
 	objects = {
 
 /* Begin PBXBuildFile section */
-		9A11998426F9868800C7C28D /* Camera.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A11998326F9868800C7C28D /* Camera.swift */; };
 		9A205C9427176BC300487507 /* CompareView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A205C9327176BC300487507 /* CompareView.swift */; };
 		9A262241276FD24900CA1BB2 /* SymbolsPicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A262240276FD24900CA1BB2 /* SymbolsPicker.swift */; };
 		9A262244276FD2C200CA1BB2 /* Symbols.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A262243276FD2C200CA1BB2 /* Symbols.swift */; };
@@ -18,14 +17,11 @@
 		9A97A7C926C37B44003E6BA0 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A97A7C826C37B44003E6BA0 /* ContentView.swift */; };
 		9A97A7CB26C37B47003E6BA0 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 9A97A7CA26C37B47003E6BA0 /* Assets.xcassets */; };
 		9A97A7CE26C37B47003E6BA0 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 9A97A7CD26C37B47003E6BA0 /* Preview Assets.xcassets */; };
-		9A97A7D926C4AF4D003E6BA0 /* Group.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A97A7D826C4AF4D003E6BA0 /* Group.swift */; };
-		9A97A7DC26C4AFA0003E6BA0 /* Realm in Frameworks */ = {isa = PBXBuildFile; productRef = 9A97A7DB26C4AFA0003E6BA0 /* Realm */; };
-		9A97A7DE26C4AFA0003E6BA0 /* RealmSwift in Frameworks */ = {isa = PBXBuildFile; productRef = 9A97A7DD26C4AFA0003E6BA0 /* RealmSwift */; };
-		9A97A7E026C4AFD9003E6BA0 /* Item.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A97A7DF26C4AFD9003E6BA0 /* Item.swift */; };
-		9A97A7E226C4B097003E6BA0 /* GroupStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A97A7E126C4B097003E6BA0 /* GroupStore.swift */; };
 		9AA07F38277CDD8E00774619 /* CompareSelect.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9AA07F37277CDD8E00774619 /* CompareSelect.swift */; };
 		9AA07F5C2782BA6700774619 /* Info.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9AA07F5B2782BA6600774619 /* Info.swift */; };
 		9AA07F60278397B300774619 /* Launch Screen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 9AA07F5F278397B200774619 /* Launch Screen.storyboard */; };
+		9AD288442F5A873700997E3E /* TrackerGroup.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9AD288432F5A873700997E3E /* TrackerGroup.swift */; };
+		9AD288462F5A873800997E3E /* TrackerItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9AD288452F5A873800997E3E /* TrackerItem.swift */; };
 		9AD52EA726D1D54A0026D57C /* ImageManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9AD52EA626D1D54A0026D57C /* ImageManager.swift */; };
 		9AE455DB26C8B4FD00AF5179 /* ItemsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9AE455DA26C8B4FD00AF5179 /* ItemsView.swift */; };
 		9AE455DF26C8BF5B00AF5179 /* AddingGroupForm.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9AE455DE26C8BF5B00AF5179 /* AddingGroupForm.swift */; };
@@ -34,7 +30,6 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		9A11998326F9868800C7C28D /* Camera.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Camera.swift; sourceTree = "<group>"; };
 		9A205C9327176BC300487507 /* CompareView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CompareView.swift; sourceTree = "<group>"; };
 		9A262240276FD24900CA1BB2 /* SymbolsPicker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SymbolsPicker.swift; sourceTree = "<group>"; };
 		9A262243276FD2C200CA1BB2 /* Symbols.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Symbols.swift; sourceTree = "<group>"; };
@@ -47,12 +42,11 @@
 		9A97A7CA26C37B47003E6BA0 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		9A97A7CD26C37B47003E6BA0 /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
 		9A97A7CF26C37B47003E6BA0 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		9A97A7D826C4AF4D003E6BA0 /* Group.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Group.swift; sourceTree = "<group>"; };
-		9A97A7DF26C4AFD9003E6BA0 /* Item.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Item.swift; sourceTree = "<group>"; };
-		9A97A7E126C4B097003E6BA0 /* GroupStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GroupStore.swift; sourceTree = "<group>"; };
 		9AA07F37277CDD8E00774619 /* CompareSelect.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CompareSelect.swift; sourceTree = "<group>"; };
 		9AA07F5B2782BA6600774619 /* Info.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Info.swift; sourceTree = "<group>"; };
 		9AA07F5F278397B200774619 /* Launch Screen.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = "Launch Screen.storyboard"; sourceTree = "<group>"; };
+		9AD288432F5A873700997E3E /* TrackerGroup.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrackerGroup.swift; sourceTree = "<group>"; };
+		9AD288452F5A873800997E3E /* TrackerItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrackerItem.swift; sourceTree = "<group>"; };
 		9AD52EA626D1D54A0026D57C /* ImageManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageManager.swift; sourceTree = "<group>"; };
 		9AE455DA26C8B4FD00AF5179 /* ItemsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ItemsView.swift; sourceTree = "<group>"; };
 		9AE455DE26C8BF5B00AF5179 /* AddingGroupForm.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddingGroupForm.swift; sourceTree = "<group>"; };
@@ -65,8 +59,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				9A97A7DE26C4AFA0003E6BA0 /* RealmSwift in Frameworks */,
-				9A97A7DC26C4AFA0003E6BA0 /* Realm in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -127,8 +119,8 @@
 		9A97A7D526C4AF29003E6BA0 /* Models */ = {
 			isa = PBXGroup;
 			children = (
-				9A97A7D826C4AF4D003E6BA0 /* Group.swift */,
-				9A97A7DF26C4AFD9003E6BA0 /* Item.swift */,
+				9AD288432F5A873700997E3E /* TrackerGroup.swift */,
+				9AD288452F5A873800997E3E /* TrackerItem.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -136,7 +128,6 @@
 		9A97A7D626C4AF33003E6BA0 /* View Models */ = {
 			isa = PBXGroup;
 			children = (
-				9A97A7E126C4B097003E6BA0 /* GroupStore.swift */,
 			);
 			path = "View Models";
 			sourceTree = "<group>";
@@ -150,7 +141,6 @@
 				9AE455DE26C8BF5B00AF5179 /* AddingGroupForm.swift */,
 				9AE455E226C8C43300AF5179 /* AddingItemForm.swift */,
 				9AE455E426C976CF00AF5179 /* ImagePicker.swift */,
-				9A11998326F9868800C7C28D /* Camera.swift */,
 				9A616E0626FBD637001E59DC /* ItemView.swift */,
 				9A262240276FD24900CA1BB2 /* SymbolsPicker.swift */,
 				9AA07F5B2782BA6600774619 /* Info.swift */,
@@ -184,8 +174,6 @@
 			);
 			name = "Image Progress Tracker";
 			packageProductDependencies = (
-				9A97A7DB26C4AFA0003E6BA0 /* Realm */,
-				9A97A7DD26C4AFA0003E6BA0 /* RealmSwift */,
 			);
 			productName = "Image Progress Tracker";
 			productReference = 9A97A7C326C37B44003E6BA0 /* Image Progress Tracker.app */;
@@ -215,7 +203,6 @@
 			);
 			mainGroup = 9A97A7BA26C37B44003E6BA0;
 			packageReferences = (
-				9A97A7DA26C4AFA0003E6BA0 /* XCRemoteSwiftPackageReference "realm-cocoa" */,
 			);
 			productRefGroup = 9A97A7C426C37B44003E6BA0 /* Products */;
 			projectDirPath = "";
@@ -244,23 +231,21 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				9A11998426F9868800C7C28D /* Camera.swift in Sources */,
 				9A262246276FE8F000CA1BB2 /* Constants.swift in Sources */,
+				9AD288442F5A873700997E3E /* TrackerGroup.swift in Sources */,
 				9A262244276FD2C200CA1BB2 /* Symbols.swift in Sources */,
 				9A262241276FD24900CA1BB2 /* SymbolsPicker.swift in Sources */,
 				9A616E0526FBD46A001E59DC /* DateManager.swift in Sources */,
 				9AA07F38277CDD8E00774619 /* CompareSelect.swift in Sources */,
-				9A97A7E026C4AFD9003E6BA0 /* Item.swift in Sources */,
 				9AD52EA726D1D54A0026D57C /* ImageManager.swift in Sources */,
 				9AA07F5C2782BA6700774619 /* Info.swift in Sources */,
 				9AE455E326C8C43300AF5179 /* AddingItemForm.swift in Sources */,
 				9AE455DB26C8B4FD00AF5179 /* ItemsView.swift in Sources */,
 				9AE455E526C976CF00AF5179 /* ImagePicker.swift in Sources */,
 				9AE455DF26C8BF5B00AF5179 /* AddingGroupForm.swift in Sources */,
-				9A97A7D926C4AF4D003E6BA0 /* Group.swift in Sources */,
 				9A616E0726FBD637001E59DC /* ItemView.swift in Sources */,
 				9A97A7C926C37B44003E6BA0 /* ContentView.swift in Sources */,
-				9A97A7E226C4B097003E6BA0 /* GroupStore.swift in Sources */,
+				9AD288462F5A873800997E3E /* TrackerItem.swift in Sources */,
 				9A205C9427176BC300487507 /* CompareView.swift in Sources */,
 				9A97A7C726C37B44003E6BA0 /* Image_Progress_TrackerApp.swift in Sources */,
 			);
@@ -320,7 +305,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 14.5;
+				IPHONEOS_DEPLOYMENT_TARGET = 26.0;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
 				ONLY_ACTIVE_ARCH = YES;
@@ -375,7 +360,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 14.5;
+				IPHONEOS_DEPLOYMENT_TARGET = 26.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
 				SDKROOT = iphoneos;
@@ -394,16 +379,16 @@
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_ASSET_PATHS = "\"Image Progress Tracker/Preview Content\"";
-				DEVELOPMENT_TEAM = M7CK97K3HD;
+				DEVELOPMENT_TEAM = 44XLG9YML7;
 				ENABLE_PREVIEWS = YES;
 				INFOPLIST_FILE = "Image Progress Tracker/Info.plist";
-				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 26.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0.1;
-				PRODUCT_BUNDLE_IDENTIFIER = com.maxxu.tracker;
+				PRODUCT_BUNDLE_IDENTIFIER = com.maxxu.picturetrack;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_VERSION = 5.0;
@@ -420,16 +405,16 @@
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_ASSET_PATHS = "\"Image Progress Tracker/Preview Content\"";
-				DEVELOPMENT_TEAM = M7CK97K3HD;
+				DEVELOPMENT_TEAM = 44XLG9YML7;
 				ENABLE_PREVIEWS = YES;
 				INFOPLIST_FILE = "Image Progress Tracker/Info.plist";
-				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 26.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0.1;
-				PRODUCT_BUNDLE_IDENTIFIER = com.maxxu.tracker;
+				PRODUCT_BUNDLE_IDENTIFIER = com.maxxu.picturetrack;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_VERSION = 5.0;
@@ -459,30 +444,6 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
-
-/* Begin XCRemoteSwiftPackageReference section */
-		9A97A7DA26C4AFA0003E6BA0 /* XCRemoteSwiftPackageReference "realm-cocoa" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/realm/realm-cocoa.git";
-			requirement = {
-				kind = upToNextMajorVersion;
-				minimumVersion = 10.12.0;
-			};
-		};
-/* End XCRemoteSwiftPackageReference section */
-
-/* Begin XCSwiftPackageProductDependency section */
-		9A97A7DB26C4AFA0003E6BA0 /* Realm */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = 9A97A7DA26C4AFA0003E6BA0 /* XCRemoteSwiftPackageReference "realm-cocoa" */;
-			productName = Realm;
-		};
-		9A97A7DD26C4AFA0003E6BA0 /* RealmSwift */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = 9A97A7DA26C4AFA0003E6BA0 /* XCRemoteSwiftPackageReference "realm-cocoa" */;
-			productName = RealmSwift;
-		};
-/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 9A97A7BB26C37B44003E6BA0 /* Project object */;
 }

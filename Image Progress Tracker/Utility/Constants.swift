@@ -1,13 +1,4 @@
-//
-//  Constants.swift
-//  Image Progress Tracker
-//
-//  Created by Max Xu on 12/19/21.
-//
-
 import Foundation
 
-struct Constants {
-    static let defaultSymbol = "photo"
-}
-
+// Constants previously here have been merged into the Symbols enum.
+// This file is kept to avoid build system issues but contains no active code.

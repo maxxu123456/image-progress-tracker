@@ -1,92 +1,72 @@
-//
-//  CompareView.swift
-//  Image Progress Tracker
-//
-//  Created by Max Xu on 10/13/21.
-//
-
 import SwiftUI
 
 struct CompareView: View {
+    var group: TrackerGroup
+    @State private var selected: [TrackerItem]
     @State private var selectingImages = false
-    @EnvironmentObject var db: GroupStore
-    @State private var selected: [Item]
-    var group: Group
-    
-    init(group: Group) {
+
+    init(group: TrackerGroup) {
         self.group = group
-        //Assigns first most recent two images to be default for selected
-        let firstTwoImagesByDateDescending = self.group.items.sorted(by: {$0.dateCreated.compare($1.dateCreated) == .orderedDescending})[0...1]
-        var selectedItems: [Item] = []
-        selectedItems.append(firstTwoImagesByDateDescending[1])
-        selectedItems.append(firstTwoImagesByDateDescending[0])
-        selected = selectedItems
+        let sorted = group.items.sorted { $0.dateCreated > $1.dateCreated }
+        if sorted.count >= 2 {
+            _selected = State(initialValue: [sorted[1], sorted[0]])
+        } else {
+            _selected = State(initialValue: [])
+        }
     }
+
     var body: some View {
         GeometryReader { geo in
             VStack {
                 Spacer()
-                if(selected.count == 2) {
+                if selected.count == 2 {
                     VStack {
-                        HStack(spacing:0) {
+                        HStack(spacing: 0) {
                             VStack {
-                                let image = getImageFromDocumentDirectory(fileName: selected[0].imageFilename)
-
                                 Text("Before")
-                                Image(uiImage: image)
-                                    .resizable()
+                                    .font(.headline)
+                                AsyncThumbnail(filename: selected[0].imageFilename, maxDimension: 1400)
                                     .aspectRatio(contentMode: .fit)
                                     .frame(width: geo.size.width / 2, alignment: .leading)
-                                Text(dateToString(date: selected[0].dateCreated))
+                                    .clipShape(RoundedRectangle(cornerRadius: 12))
+                                Text(selected[0].dateCreated.toMediumString())
+                                    .font(.caption)
                             }
                             VStack {
-                                let image = getImageFromDocumentDirectory(fileName: selected[1].imageFilename)
                                 Text("After")
-                                Image(uiImage: image)
-                                    .resizable()
+                                    .font(.headline)
+                                AsyncThumbnail(filename: selected[1].imageFilename, maxDimension: 1400)
                                     .aspectRatio(contentMode: .fit)
-                                    .frame(width: geo.size.width / 2, alignment: .trailing )
-                                Text(dateToString(date: selected[1].dateCreated))
+                                    .frame(width: geo.size.width / 2, alignment: .trailing)
+                                    .clipShape(RoundedRectangle(cornerRadius: 12))
+                                Text(selected[1].dateCreated.toMediumString())
+                                    .font(.caption)
                             }
-                            
                         }
-                        Text(String(daysBetween(start: selected[0].dateCreated,end: selected[1].dateCreated)) + " days apart.").padding(.top)
+                        Text("\(selected[0].dateCreated.daysBetween(selected[1].dateCreated)) days apart.")
+                            .font(.subheadline)
+                            .foregroundStyle(.secondary)
+                            .padding(.top)
                     }
-                    
                 }
                 Spacer()
-//                Text("1 Year apart")
-//                    .padding(.top)
             }
             .navigationTitle("Compare")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
-                ToolbarItem(placement:.navigationBarTrailing) {
-                    selectForCompare
-                    
+                ToolbarItem(placement: .topBarTrailing) {
+                    Button { selectingImages = true } label: {
+                        Image(systemName: "square.stack")
+                    }
                 }
             }
             .sheet(isPresented: $selectingImages) {
-                CompareSelect(items: Array(group.items), selectedConstant: Array(selected), selected: $selected ).environmentObject(db)
+                CompareSelect(
+                    items: group.items,
+                    selectedConstant: selected,
+                    selected: $selected
+                )
             }
-                
-            
-            
         }
-            
     }
-    var selectForCompare: some View {
-        Button(action: {selectingImages = true}, label: {
-            HStack{
-                Image(systemName: "square.stack")
-            }
-        })
-    }
-
 }
-
-//struct CompareView_Previews: PreviewProvider {
-//    static var previews: some View {
-//        CompareView()
-//    }
-//}

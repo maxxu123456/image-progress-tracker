@@ -1,10 +1,33 @@
-//
-//  File.swift
-//
-//
-//  Created by Alessio Rubicini on 06/01/21.
-//
 import Foundation
 
+enum Symbols {
+    static let defaultSymbol = "figure.run"
 
-let symbols  = ["photo","list.bullet","tv","books.vertical","gamecontroller","house","externaldrive.connected.to.line.below","airplane","car","person.3.sequence","globe.americas","paintbrush","bag","dollarsign.circle","clock","heart","pills","seal","square","rectangle","sum"]
+    static let all: [String] = [
+        // Fitness & Health
+        "figure.run", "dumbbell", "figure.hiking", "bicycle",
+        "heart", "pills", "cross.case",
+
+        // Learning & Work
+        "book", "graduationcap", "pencil.and.ruler", "briefcase",
+        "desktopcomputer",
+
+        // Home & Garden
+        "house", "leaf", "hammer", "paintbrush",
+
+        // Appearance & Self-care
+        "face.smiling", "comb", "scissors",
+
+        // Pets & Animals
+        "pawprint", "fish",
+
+        // Hobbies & Creative
+        "camera", "paintpalette", "guitars", "photo",
+
+        // Travel & Outdoors
+        "car", "airplane", "map", "sun.max",
+
+        // General
+        "star", "flag", "folder", "tag",
+    ]
+}

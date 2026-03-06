@@ -1,20 +1,20 @@
-//
-//  DateManager.swift
-//  Image Progress Tracker
-//
-//  Created by Max Xu on 9/22/21.
-//
-
 import Foundation
 
-func dateToString(date: Date) -> String {
-    let dateFormatter = DateFormatter()
-    dateFormatter.dateStyle = .medium
-    dateFormatter.timeStyle = .none
-    dateFormatter.locale = Locale(identifier: "en_US")
-    return dateFormatter.string(from: date)
-}
+extension Date {
+    private static let mediumStyle = Date.FormatStyle(date: .abbreviated, time: .omitted)
+        .locale(Locale(identifier: "en_US"))
 
-func daysBetween(start: Date, end: Date) -> Int {
-        return Calendar.current.dateComponents([.day], from: start, to: end).day!
+    /// Formats the date as medium style (e.g., "Jan 12, 2024").
+    func toMediumString() -> String {
+        formatted(Self.mediumStyle)
+    }
+
+    /// Returns the number of calendar days between this date and another date.
+    /// Uses startOfDay to avoid sub-24h and DST edge cases.
+    func daysBetween(_ other: Date) -> Int {
+        let calendar = Calendar.current
+        let start = calendar.startOfDay(for: self)
+        let end = calendar.startOfDay(for: other)
+        return abs(calendar.dateComponents([.day], from: start, to: end).day ?? 0)
+    }
 }

@@ -1,103 +1,110 @@
-//
-//  ContentView.swift
-//  Image Progress Tracker
-//
-//  Created by Max Xu on 8/10/21.
-//
-
 import SwiftUI
+import SwiftData
 
 struct ContentView: View {
-    @ObservedObject var db: GroupStore
+    @Query(sort: \TrackerGroup.name) private var groups: [TrackerGroup]
+    @Query private var items: [TrackerItem]
+    @Environment(\.modelContext) private var modelContext
     @State private var addingGroup = false
-    
-    @State private var groupName: String = ""
     @State private var showingInfo = false
-    private func deleteGroup(with indexSet: IndexSet){
-        indexSet.forEach ({ index in
-            db.deleteGroupByIndex(index: index)
-        })
+
+    private var itemCountsByGroupID: [String: Int] {
+        items.reduce(into: [:]) { counts, item in
+            guard let groupID = item.group?.id else { return }
+            counts[groupID, default: 0] += 1
+        }
     }
+
     var body: some View {
-        
-        VStack{
-            NavigationView {
-                VStack {
-                    VStack {
-                        if(db.groups.count == 0) {
-                            Text("Add a Group using the button below.")
-                            
-                        } else {
-                            List {
-                                
-                                ForEach(db.groups) { group in
-                                    NavigationLink(destination: ItemsView(groupId: group.id,name: group.name).environmentObject(db)) {
-                                        HStack{
-                                            let _ = db.printRealmDirectory()
-                                            Image(systemName: group.icon)
-                                            Text(group.name)
-                                            Text(String(group.items.count) + " items")
-                                                .fontWeight(.light)
-                                                .font(.subheadline)
-                                                .foregroundColor(.gray)
-                                            
-                                        }
-                                    }
-                                    
-                                    
+        NavigationStack {
+            VStack {
+                if groups.isEmpty {
+                    ContentUnavailableView(
+                        "No Groups",
+                        systemImage: "folder.badge.plus",
+                        description: Text("Add a Group using the button below.")
+                    )
+                } else {
+                    List {
+                        ForEach(groups, id: \.id) { group in
+                            NavigationLink(value: group.persistentModelID) {
+                                HStack {
+                                    Image(systemName: group.icon)
+                                    Text(group.name)
+                                    Text(itemCountText(for: group))
+                                        .fontWeight(.light)
+                                        .font(.subheadline)
+                                        .foregroundStyle(.secondary)
                                 }
-                                .onDelete(perform: deleteGroup)
-                                
                             }
                         }
-                        
-                        
-                    }.navigationTitle("Groups")
-                        .toolbar {
-                            ToolbarItem(placement: .navigationBarLeading) {
-                                Button(action: {
-                                    showingInfo = true
-                                }, label: {
-                                    Image(systemName: "info.circle")
-                                })
-                            }
-                        }
-                    
-                    Spacer()
-                    
-                    addingGroupButton
-                    
-                    
-                    
+                        .onDelete(perform: deleteGroups)
+                    }
+                }
+
+                Spacer()
+
+                Button {
+                    addingGroup = true
+                } label: {
+                    Label("Add Group", systemImage: "folder.badge.plus")
+                        .bold()
+                }
+                .buttonStyle(.glass)
+                .padding()
+            }
+            .navigationTitle("Groups")
+            .navigationDestination(for: PersistentIdentifier.self) { groupID in
+                ItemsViewResolver(groupID: groupID)
+            }
+            .toolbar {
+                ToolbarItem(placement: .topBarLeading) {
+                    Button { showingInfo = true } label: {
+                        Image(systemName: "info.circle")
+                    }
                 }
             }
-            
-            
-            
-            
         }
         .sheet(isPresented: $addingGroup) {
-            AddingGroupForm().environmentObject(db)
+            AddingGroupForm()
         }
         .sheet(isPresented: $showingInfo) {
             Info()
         }
-        
-        
-        
-        
-        
     }
-    
-    var addingGroupButton: some View {
-        Button(action: {addingGroup = true}, label: {
-            HStack{
-                Image(systemName: "folder.badge.plus")
-                Text("Add Group")
-                    .bold()
-            }.foregroundColor(.green)
-        }).padding()
+
+    private func deleteGroups(at offsets: IndexSet) {
+        for index in offsets {
+            let group = groups[index]
+            let filenames = group.items.map(\.imageFilename)
+            modelContext.delete(group)
+            do {
+                try modelContext.save()
+                for filename in filenames {
+                    ImageStore.deleteImage(filename: filename)
+                }
+            } catch {
+                // Model delete failed; image files preserved
+            }
+        }
     }
-    
-    
+
+    private func itemCountText(for group: TrackerGroup) -> String {
+        let count = itemCountsByGroupID[group.id, default: 0]
+        return count == 1 ? "1 item" : "\(count) items"
+    }
+}
+
+/// Resolves a PersistentIdentifier back into a TrackerGroup for navigation.
+struct ItemsViewResolver: View {
+    let groupID: PersistentIdentifier
+    @Environment(\.modelContext) private var modelContext
+
+    var body: some View {
+        if let group = modelContext.model(for: groupID) as? TrackerGroup {
+            ItemsView(group: group)
+        } else {
+            ContentUnavailableView("Group Not Found", systemImage: "exclamationmark.triangle")
+        }
+    }
 }

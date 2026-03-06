@@ -1,58 +1,43 @@
-//
-//  AddingGroupForm.swift
-//  Image Progress Tracker
-//
-//  Created by Max Xu on 8/14/21.
-//
-
 import SwiftUI
+import SwiftData
 
 struct AddingGroupForm: View {
-    @Environment(\.presentationMode) var presentationMode
-    @EnvironmentObject var db: GroupStore
-    @State private var groupName: String = ""
-    @State private var icon = Constants.defaultSymbol
-    var body: some View {
-        NavigationView {
-            VStack{
+    @Environment(\.dismiss) private var dismiss
+    @Environment(\.modelContext) private var modelContext
+    @State private var groupName = ""
+    @State private var icon = Symbols.defaultSymbol
 
-                Form {
-                    HStack{
-                        Spacer()
-                        Image(systemName: icon)
-                            .font(.largeTitle)
-                        Spacer()
-                    }
-                    
-                    Section(header: Text("Group Name")) {
-                        TextField("", text: $groupName)
-                    }
-                    Section(header: Text("Icon")) {
-                        SymbolsPicker(icon: $icon)
-                    }
+    var body: some View {
+        NavigationStack {
+            Form {
+                HStack {
+                    Spacer()
+                    Image(systemName: icon)
+                        .font(.largeTitle)
+                    Spacer()
+                }
+
+                Section("Group Name") {
+                    TextField("Enter name", text: $groupName)
+                }
+                Section("Icon") {
+                    SymbolsPicker(icon: $icon)
                 }
             }
-            
-            
             .navigationTitle("Add Group")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
-                ToolbarItem(placement: .navigationBarLeading) {
-                    Button(action: {
-                        presentationMode.wrappedValue.dismiss()
-                    }, label: {
-                        Text("Exit")
-                    })
+                ToolbarItem(placement: .cancellationAction) {
+                    Button("Cancel") { dismiss() }
                 }
-                ToolbarItem(placement:.navigationBarTrailing) {
-                    Button(action: {
-                        db.addGroup(name: groupName, icon: icon)
-                        groupName = ""
-                        presentationMode.wrappedValue.dismiss()
-                    }, label: {
-                        Text("Save")
-                    })
-                        .disabled(groupName == "")
+                ToolbarItem(placement: .confirmationAction) {
+                    Button("Save") {
+                        let group = TrackerGroup(name: groupName, icon: icon)
+                        modelContext.insert(group)
+                        try? modelContext.save()
+                        dismiss()
+                    }
+                    .disabled(groupName.isEmpty)
                 }
             }
         }

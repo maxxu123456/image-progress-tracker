@@ -1,38 +1,35 @@
-//
-//  Info.swift
-//  Image Progress Tracker
-//
-//  Created by Max Xu on 1/3/22.
-//
-
 import SwiftUI
 
 struct Info: View {
-    @Environment(\.presentationMode) var presentationMode
-    
+    @Environment(\.dismiss) private var dismiss
+
     var body: some View {
-        NavigationView {
+        NavigationStack {
             List {
-                Section(header: Text("Support")) {
-                    Link("Privacy Policy", destination: URL(string: "https://sites.google.com/view/picturetrack/privacy-policy")!)
-                    Link("Contact", destination: URL(string: "https://sites.google.com/view/picturetrack/contact")!)
-                    
+                Section("Support") {
+                    if let privacyURL = URL(string: "https://sites.google.com/view/picturetrack/privacy-policy") {
+                        Link("Privacy Policy", destination: privacyURL)
+                    }
+                    if let contactURL = URL(string: "https://sites.google.com/view/picturetrack/contact") {
+                        Link("Contact", destination: contactURL)
+                    }
+                }
+                Section("Developer") {
+                    if let githubURL = URL(string: "https://github.com/maxxu123456/image-progress-tracker") {
+                        Link("Source Code", destination: githubURL)
+                    }
+                    if let linkedinURL = URL(string: "https://www.linkedin.com/in/maxxu123456/") {
+                        Link("LinkedIn", destination: linkedinURL)
+                    }
                 }
             }
             .navigationTitle("Information")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
-                ToolbarItem(placement: .navigationBarTrailing) {
-                    Button(action: {
-                        presentationMode.wrappedValue.dismiss()
-                    }, label: {
-                        Text("Done")
-                    })
+                ToolbarItem(placement: .topBarTrailing) {
+                    Button("Done") { dismiss() }
                 }
             }
         }
-        
-        
     }
-    
 }

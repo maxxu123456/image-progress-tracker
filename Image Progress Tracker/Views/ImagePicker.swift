@@ -1,45 +1,42 @@
-//
-//  ImagePicker.swift
-//  Image Progress Tracker
-//
-//  Created by Max Xu on 8/15/21.
-//
-
 import SwiftUI
 
-
 struct ImagePicker: UIViewControllerRepresentable {
+    @Environment(\.dismiss) private var dismiss
+    @Binding var image: UIImage?
+    @Binding var metadata: [String: Any]?
+
     class Coordinator: NSObject, UINavigationControllerDelegate, UIImagePickerControllerDelegate {
         let parent: ImagePicker
 
         init(_ parent: ImagePicker) {
             self.parent = parent
         }
+
         func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey: Any]) {
             if let uiImage = info[.originalImage] as? UIImage {
                 parent.image = uiImage
             }
+            parent.metadata = info[.mediaMetadata] as? [String: Any]
+            parent.dismiss()
+        }
 
-            parent.presentationMode.wrappedValue.dismiss()
+        func imagePickerControllerDidCancel(_ picker: UIImagePickerController) {
+            parent.dismiss()
         }
     }
-    @Environment(\.presentationMode) var presentationMode
-    @Binding var image: UIImage?
-    
+
     func makeCoordinator() -> Coordinator {
         Coordinator(self)
     }
-    
-    func makeUIViewController(context: UIViewControllerRepresentableContext<ImagePicker>) -> UIImagePickerController {
+
+    func makeUIViewController(context: Context) -> UIImagePickerController {
         let picker = UIImagePickerController()
         picker.delegate = context.coordinator
-        picker.sourceType = .camera
+        if UIImagePickerController.isSourceTypeAvailable(.camera) {
+            picker.sourceType = .camera
+        }
         return picker
     }
 
-    func updateUIViewController(_ uiViewController: UIImagePickerController, context: UIViewControllerRepresentableContext<ImagePicker>) {
-
-    }
-    
-    
+    func updateUIViewController(_ uiViewController: UIImagePickerController, context: Context) {}
 }

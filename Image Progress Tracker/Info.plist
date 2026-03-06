@@ -28,6 +28,8 @@
 	<string>This app requires access to the camera in order to take photos and save them them to the group.</string>
 	<key>NSPhotoLibraryAddUsageDescription</key>
 	<string>The photo is added to the user's photo library.</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>This app accesses your photo library to import photos and read their date information.</string>
 	<key>UIApplicationSceneManifest</key>
 	<dict>
 		<key>UIApplicationSupportsMultipleScenes</key>
