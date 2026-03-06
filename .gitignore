@@ -1,0 +1,20 @@
+.DS_Store
+
+# Xcode user-specific files
+xcuserdata/
+*.xcuserstate
+
+# Local build products
+DerivedData/
+build/
+.build/
+.derived-data/
+.derived-data-ios/
+.derived-data-ios-check/
+
+# Swift Package Manager
+.swiftpm/
+
+# Temporary editor/system files
+*.swp
+*.swo
