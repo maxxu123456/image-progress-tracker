@@ -4,6 +4,20 @@ import ImageIO
 import SwiftUI
 
 enum ImageStore {
+    enum Error: LocalizedError {
+        case invalidImageData
+        case writeFailed
+
+        var errorDescription: String? {
+            switch self {
+            case .invalidImageData:
+                return "The image data is invalid."
+            case .writeFailed:
+                return "The image could not be written to disk."
+            }
+        }
+    }
+
     private static let imageCache: NSCache<NSString, UIImage> = {
         let cache = NSCache<NSString, UIImage>()
         cache.countLimit = 200
@@ -72,6 +86,34 @@ enum ImageStore {
     static func loadImageData(filename: String) -> Data? {
         let url = documentsDirectory.appendingPathComponent(filename)
         return try? Data(contentsOf: url, options: .mappedIfSafe)
+    }
+
+    static func isValidImageData(_ data: Data) -> Bool {
+        guard !data.isEmpty else { return false }
+
+        let sourceOptions: [CFString: Any] = [
+            kCGImageSourceShouldCache: false
+        ]
+        return CGImageSourceCreateWithData(data as CFData, sourceOptions as CFDictionary) != nil
+    }
+
+    /// Saves raw image data to the Documents directory without recompressing it.
+    /// This is used for collection imports so EXIF and other embedded metadata survive intact.
+    static func saveImageData(_ data: Data) throws -> String {
+        guard isValidImageData(data) else {
+            throw Error.invalidImageData
+        }
+
+        let filename = UUID().uuidString
+        let url = documentsDirectory.appendingPathComponent(filename)
+
+        do {
+            try data.write(to: url, options: .atomic)
+            imageCache.removeAllObjects()
+            return filename
+        } catch {
+            throw Error.writeFailed
+        }
     }
 
     /// Generates a cached downsampled image of the given max dimension, loading from disk off-main.

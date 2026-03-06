@@ -7,6 +7,12 @@ struct ItemsView: View {
     @State private var addingItem = false
     @State private var showingCompare = false
     @State private var showingSavedPopup = false
+    @State private var exportDocument: CollectionArchiveDocument?
+    @State private var exportFilename = ""
+    @State private var showingExporter = false
+    @State private var isPreparingExport = false
+    @State private var showingTransferError = false
+    @State private var transferErrorMessage = ""
 
     private var sortedItems: [TrackerItem] {
         group.items.sorted { $0.dateCreated > $1.dateCreated }
@@ -90,7 +96,14 @@ struct ItemsView: View {
         .navigationTitle(group.name)
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {
-            ToolbarItem(placement: .topBarTrailing) {
+            ToolbarItemGroup(placement: .topBarTrailing) {
+                Button {
+                    prepareCollectionExport()
+                } label: {
+                    Image(systemName: "square.and.arrow.up")
+                }
+                .disabled(isPreparingExport)
+
                 Button { addingItem = true } label: {
                     Image(systemName: "plus")
                 }
@@ -103,6 +116,80 @@ struct ItemsView: View {
             NavigationStack {
                 CompareView(group: group)
             }
+        }
+        .fileExporter(
+            isPresented: $showingExporter,
+            document: exportDocument,
+            contentType: .pictureTrackCollection,
+            defaultFilename: exportFilename
+        ) { result in
+            handleExportResult(result)
+        }
+        .alert("Collection Transfer", isPresented: $showingTransferError) {
+            Button("OK") {}
+        } message: {
+            Text(transferErrorMessage)
+        }
+        .overlay {
+            if isPreparingExport {
+                ZStack {
+                    Color.black.opacity(0.15)
+                        .ignoresSafeArea()
+
+                    VStack(spacing: 12) {
+                        ProgressView()
+                            .controlSize(.large)
+                        Text("Preparing Export…")
+                            .font(.headline)
+                    }
+                    .padding(24)
+                    .background(.ultraThinMaterial, in: RoundedRectangle(cornerRadius: 18))
+                }
+            }
+        }
+    }
+
+    private func prepareCollectionExport() {
+        isPreparingExport = true
+
+        let snapshot = CollectionArchiveService.ExportSnapshot(
+            groupID: group.id,
+            name: group.name,
+            icon: group.icon,
+            items: group.items.map { item in
+                .init(
+                    itemID: item.id,
+                    imageFilename: item.imageFilename,
+                    notes: item.notes,
+                    dateCreated: item.dateCreated
+                )
+            }
+        )
+        let defaultFilename = CollectionArchiveService.defaultFilename(for: group.name)
+
+        Task { @MainActor in
+            do {
+                let document = try await CollectionArchiveService.makeDocument(from: snapshot)
+                exportDocument = document
+                exportFilename = defaultFilename
+                isPreparingExport = false
+                showingExporter = true
+            } catch {
+                isPreparingExport = false
+                transferErrorMessage = error.localizedDescription
+                showingTransferError = true
+            }
+        }
+    }
+
+    private func handleExportResult(_ result: Result<URL, Error>) {
+        switch result {
+        case .success:
+            exportDocument = nil
+        case .failure(let error):
+            guard !FileTransferErrorHelper.isUserCancelled(error) else { return }
+            transferErrorMessage = error.localizedDescription
+            showingTransferError = true
         }
     }
 }

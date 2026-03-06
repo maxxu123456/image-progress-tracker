@@ -13,6 +13,7 @@ build/
 .derived-data/
 .derived-data-ios/
 .derived-data-ios-check/
+.derived-data-build*/
 
 # Swift Package Manager
 .swiftpm/

@@ -7,6 +7,10 @@ struct ContentView: View {
     @Environment(\.modelContext) private var modelContext
     @State private var addingGroup = false
     @State private var showingInfo = false
+    @State private var showingImporter = false
+    @State private var isImportingCollection = false
+    @State private var showingTransferError = false
+    @State private var transferErrorMessage = ""
 
     private var itemCountsByGroupID: [String: Int] {
         items.reduce(into: [:]) { counts, item in
@@ -63,6 +67,14 @@ struct ContentView: View {
                         Image(systemName: "info.circle")
                     }
                 }
+                ToolbarItem(placement: .topBarTrailing) {
+                    Button {
+                        showingImporter = true
+                    } label: {
+                        Image(systemName: "square.and.arrow.down")
+                    }
+                    .disabled(isImportingCollection)
+                }
             }
         }
         .sheet(isPresented: $addingGroup) {
@@ -70,6 +82,22 @@ struct ContentView: View {
         }
         .sheet(isPresented: $showingInfo) {
             Info()
+        }
+        .fileImporter(
+            isPresented: $showingImporter,
+            allowedContentTypes: [.pictureTrackCollection]
+        ) { result in
+            handleCollectionImport(result: result)
+        }
+        .alert("Collection Transfer", isPresented: $showingTransferError) {
+            Button("OK") {}
+        } message: {
+            Text(transferErrorMessage)
+        }
+        .overlay {
+            if isImportingCollection {
+                progressOverlay(title: "Importing Collection…")
+            }
         }
     }
 
@@ -92,6 +120,46 @@ struct ContentView: View {
     private func itemCountText(for group: TrackerGroup) -> String {
         let count = itemCountsByGroupID[group.id, default: 0]
         return count == 1 ? "1 item" : "\(count) items"
+    }
+
+    private func handleCollectionImport(result: Result<URL, Error>) {
+        switch result {
+        case .success(let url):
+            isImportingCollection = true
+
+            Task { @MainActor in
+                do {
+                    let archive = try await CollectionArchiveService.readArchive(from: url)
+                    try CollectionArchiveService.importArchive(archive, into: modelContext)
+                    isImportingCollection = false
+                } catch {
+                    isImportingCollection = false
+                    transferErrorMessage = error.localizedDescription
+                    showingTransferError = true
+                }
+            }
+        case .failure(let error):
+            guard !FileTransferErrorHelper.isUserCancelled(error) else { return }
+            transferErrorMessage = error.localizedDescription
+            showingTransferError = true
+        }
+    }
+
+    @ViewBuilder
+    private func progressOverlay(title: String) -> some View {
+        ZStack {
+            Color.black.opacity(0.15)
+                .ignoresSafeArea()
+
+            VStack(spacing: 12) {
+                ProgressView()
+                    .controlSize(.large)
+                Text(title)
+                    .font(.headline)
+            }
+            .padding(24)
+            .background(.ultraThinMaterial, in: RoundedRectangle(cornerRadius: 18))
+        }
     }
 }
 
