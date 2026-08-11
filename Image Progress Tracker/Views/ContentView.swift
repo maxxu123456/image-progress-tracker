@@ -20,6 +20,7 @@ struct ContentView: View {
     }
 
     var body: some View {
+        let itemCounts = itemCountsByGroupID
         NavigationStack {
             VStack {
                 if groups.isEmpty {
@@ -35,7 +36,7 @@ struct ContentView: View {
                                 HStack {
                                     Image(systemName: group.icon)
                                     Text(group.name)
-                                    Text(itemCountText(for: group))
+                                    Text(itemCountText(for: group, counts: itemCounts))
                                         .fontWeight(.light)
                                         .font(.subheadline)
                                         .foregroundStyle(.secondary)
@@ -108,6 +109,9 @@ struct ContentView: View {
             modelContext.delete(group)
             do {
                 try modelContext.save()
+                // Deliberately synchronous: the rows are already gone, so if the
+                // process died before a deferred cleanup ran, these files would be
+                // orphaned in Documents forever (nothing sweeps for them).
                 for filename in filenames {
                     ImageStore.deleteImage(filename: filename)
                 }
@@ -117,8 +121,8 @@ struct ContentView: View {
         }
     }
 
-    private func itemCountText(for group: TrackerGroup) -> String {
-        let count = itemCountsByGroupID[group.id, default: 0]
+    private func itemCountText(for group: TrackerGroup, counts: [String: Int]) -> String {
+        let count = counts[group.id, default: 0]
         return count == 1 ? "1 item" : "\(count) items"
     }
 
@@ -130,7 +134,7 @@ struct ContentView: View {
             Task { @MainActor in
                 do {
                     let archive = try await CollectionArchiveService.readArchive(from: url)
-                    try CollectionArchiveService.importArchive(archive, into: modelContext)
+                    try await CollectionArchiveService.importArchive(archive, container: modelContext.container)
                     isImportingCollection = false
                 } catch {
                     isImportingCollection = false

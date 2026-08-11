@@ -23,6 +23,7 @@ struct AddingItemForm: View {
     @State private var showingError = false
     @State private var errorMessage = ""
     @State private var showingCameraDenied = false
+    @State private var isSaving = false
 
     var body: some View {
         NavigationStack {
@@ -39,11 +40,13 @@ struct AddingItemForm: View {
 
                     Menu {
                         Button {
+                            guard !isSaving else { return }
                             requestCameraAccess()
                         } label: {
                             Label("Take a Photo", systemImage: "camera")
                         }
                         Button {
+                            guard !isSaving else { return }
                             showingPhotoPicker = true
                         } label: {
                             Label("Choose from Library", systemImage: "photo.on.rectangle")
@@ -83,7 +86,10 @@ struct AddingItemForm: View {
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
-                    Button("Cancel") { dismiss() }
+                    Button("Cancel") {
+                        guard !isSaving else { return }
+                        dismiss()
+                    }
                 }
                 ToolbarItem(placement: .confirmationAction) {
                     Button("Save") { saveItem() }
@@ -91,6 +97,7 @@ struct AddingItemForm: View {
                 }
             }
         }
+        .interactiveDismissDisabled(isSaving)
         .sheet(isPresented: $showingCamera) {
             ImagePicker(image: $capturedImage, metadata: $capturedMetadata)
         }
@@ -160,7 +167,12 @@ struct AddingItemForm: View {
         isLoadingPhoto = true
         Task {
             guard let data = try? await item.loadTransferable(type: Data.self),
-                  let image = await Task.detached(priority: .userInitiated, operation: { UIImage(data: data) }).value else {
+                  let image = await Task.detached(priority: .userInitiated, operation: { () -> UIImage? in
+                      // preparingForDisplay forces JPEG decompression here, off-main;
+                      // otherwise the first on-screen draw decodes on the main thread.
+                      guard let decoded = UIImage(data: data) else { return nil }
+                      return decoded.preparingForDisplay() ?? decoded
+                  }).value else {
                 await MainActor.run {
                     errorMessage = "Failed to load the selected photo."
                     showingError = true
@@ -189,28 +201,38 @@ struct AddingItemForm: View {
     // MARK: - Save
 
     private func saveItem() {
-        guard let image = capturedImage else { return }
+        guard !isSaving, let image = capturedImage else { return }
+        isSaving = true
+        // The image and its metadata are pinned by the guards on the photo
+        // menu; notes and date are read after the encode completes, so what
+        // is persisted always matches what is on screen at dismissal.
+        let metadata = capturedMetadata
+        Task {
+            let filename = await Task.detached(priority: .userInitiated) {
+                ImageStore.saveJPEG(image, metadata: metadata)
+            }.value
+            defer { isSaving = false }
+            guard let filename else {
+                errorMessage = "Failed to save the photo. Please try again."
+                showingError = true
+                return
+            }
 
-        guard let filename = ImageStore.saveJPEG(image, metadata: capturedMetadata) else {
-            errorMessage = "Failed to save the photo. Please try again."
-            showingError = true
-            return
+            let newItem = TrackerItem(imageFilename: filename, notes: notes, dateCreated: itemDate)
+            newItem.group = group
+            modelContext.insert(newItem)
+
+            do {
+                try modelContext.save()
+            } catch {
+                // Model save failed — clean up the orphaned image file
+                ImageStore.deleteImage(filename: filename)
+                errorMessage = "Failed to save. Please try again."
+                showingError = true
+                return
+            }
+
+            dismiss()
         }
-
-        let newItem = TrackerItem(imageFilename: filename, notes: notes, dateCreated: itemDate)
-        newItem.group = group
-        modelContext.insert(newItem)
-
-        do {
-            try modelContext.save()
-        } catch {
-            // Model save failed — clean up the orphaned image file
-            ImageStore.deleteImage(filename: filename)
-            errorMessage = "Failed to save. Please try again."
-            showingError = true
-            return
-        }
-
-        dismiss()
     }
 }

@@ -2,12 +2,14 @@ import SwiftUI
 
 struct CompareView: View {
     var group: TrackerGroup
+    private let sortedItems: [TrackerItem]
     @State private var selected: [TrackerItem]
     @State private var selectingImages = false
 
     init(group: TrackerGroup) {
         self.group = group
         let sorted = group.items.sorted { $0.dateCreated > $1.dateCreated }
+        self.sortedItems = sorted
         if sorted.count >= 2 {
             _selected = State(initialValue: [sorted[1], sorted[0]])
         } else {
@@ -62,7 +64,7 @@ struct CompareView: View {
             }
             .sheet(isPresented: $selectingImages) {
                 CompareSelect(
-                    items: group.items,
+                    items: sortedItems,
                     selectedConstant: selected,
                     selected: $selected
                 )

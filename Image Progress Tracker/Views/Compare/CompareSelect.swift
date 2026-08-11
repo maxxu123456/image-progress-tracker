@@ -12,7 +12,7 @@ struct CompareSelect: View {
             GeometryReader { geo in
                 ScrollView {
                     LazyVGrid(columns: columns) {
-                        ForEach(items.sorted(by: { $0.dateCreated > $1.dateCreated }), id: \.id) { item in
+                        ForEach(items, id: \.id) { item in
                             let isSelected = selected.contains(where: { $0.id == item.id })
                             AsyncThumbnail(filename: item.imageFilename, maxDimension: 300)
                                 .scaledToFill()

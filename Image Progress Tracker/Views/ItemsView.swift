@@ -14,71 +14,8 @@ struct ItemsView: View {
     @State private var showingTransferError = false
     @State private var transferErrorMessage = ""
 
-    private var sortedItems: [TrackerItem] {
-        group.items.sorted { $0.dateCreated > $1.dateCreated }
-    }
-
     var body: some View {
-        VStack {
-            if group.items.count >= 2 {
-                Button { showingCompare = true } label: {
-                    Label("Before vs. After", systemImage: "square.on.square")
-                }
-                .buttonStyle(.glass)
-                .padding()
-            }
-
-            ScrollView {
-                if group.items.isEmpty {
-                    Text("Add an Item using the button above.")
-                        .padding(.top, 40)
-                } else {
-                    LazyVStack(spacing: 16) {
-                        ForEach(sortedItems, id: \.id) { item in
-                            NavigationLink(destination: ItemView(item: item)) {
-                                VStack {
-                                    Text(item.dateCreated.toMediumString())
-                                        .foregroundStyle(.primary)
-                                    AsyncThumbnail(filename: item.imageFilename, maxDimension: 400)
-                                        .scaledToFill()
-                                        .frame(width: 200, height: 200, alignment: .center)
-                                        .clipped()
-                                        .clipShape(RoundedRectangle(cornerRadius: 12))
-                                }
-                            }
-                            .contextMenu {
-                                Button {
-                                    ImageSaver().saveToPhotoLibrary(filename: item.imageFilename, creationDate: item.dateCreated) { success in
-                                        guard success else { return }
-                                        withAnimation { showingSavedPopup = true }
-                                        DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) {
-                                            withAnimation { showingSavedPopup = false }
-                                        }
-                                    }
-                                } label: {
-                                    Label("Save Image to Library", systemImage: "arrow.down.circle")
-                                }
-
-                                Button(role: .destructive) {
-                                    let filename = item.imageFilename
-                                    withAnimation(.easeOut) {
-                                        modelContext.delete(item)
-                                        do {
-                                            try modelContext.save()
-                                            ImageStore.deleteImage(filename: filename)
-                                        } catch {
-                                            // Model delete failed; image file preserved
-                                        }
-                                    }
-                                } label: {
-                                    Label("Delete", systemImage: "trash")
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        }
+        GroupItemsList(group: group, showingCompare: $showingCompare, showingSavedPopup: $showingSavedPopup)
         .overlay {
             if showingSavedPopup {
                 VStack(spacing: 6) {
@@ -190,6 +127,90 @@ struct ItemsView: View {
             guard !FileTransferErrorHelper.isUserCancelled(error) else { return }
             transferErrorMessage = error.localizedDescription
             showingTransferError = true
+        }
+    }
+}
+
+/// Owns the group-scoped, pre-sorted item query so the row list neither
+/// re-sorts on every parent body evaluation nor re-evaluates when
+/// export/sheet state toggles in ItemsView.
+private struct GroupItemsList: View {
+    @Environment(\.modelContext) private var modelContext
+    @Binding var showingCompare: Bool
+    @Binding var showingSavedPopup: Bool
+    @Query private var items: [TrackerItem]
+
+    init(group: TrackerGroup, showingCompare: Binding<Bool>, showingSavedPopup: Binding<Bool>) {
+        _showingCompare = showingCompare
+        _showingSavedPopup = showingSavedPopup
+        let groupID = group.id
+        _items = Query(
+            filter: #Predicate<TrackerItem> { $0.group?.id == groupID },
+            sort: \TrackerItem.dateCreated,
+            order: .reverse
+        )
+    }
+
+    var body: some View {
+        VStack {
+            if items.count >= 2 {
+                Button { showingCompare = true } label: {
+                    Label("Before vs. After", systemImage: "square.on.square")
+                }
+                .buttonStyle(.glass)
+                .padding()
+            }
+
+            ScrollView {
+                if items.isEmpty {
+                    Text("Add an Item using the button above.")
+                        .padding(.top, 40)
+                } else {
+                    LazyVStack(spacing: 16) {
+                        ForEach(items, id: \.id) { item in
+                            NavigationLink(destination: ItemView(item: item)) {
+                                VStack {
+                                    Text(item.dateCreated.toMediumString())
+                                        .foregroundStyle(.primary)
+                                    AsyncThumbnail(filename: item.imageFilename, maxDimension: 400)
+                                        .scaledToFill()
+                                        .frame(width: 200, height: 200, alignment: .center)
+                                        .clipped()
+                                        .clipShape(RoundedRectangle(cornerRadius: 12))
+                                }
+                            }
+                            .contextMenu {
+                                Button {
+                                    ImageSaver().saveToPhotoLibrary(filename: item.imageFilename, creationDate: item.dateCreated) { success in
+                                        guard success else { return }
+                                        withAnimation { showingSavedPopup = true }
+                                        DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) {
+                                            withAnimation { showingSavedPopup = false }
+                                        }
+                                    }
+                                } label: {
+                                    Label("Save Image to Library", systemImage: "arrow.down.circle")
+                                }
+
+                                Button(role: .destructive) {
+                                    let filename = item.imageFilename
+                                    withAnimation(.easeOut) {
+                                        modelContext.delete(item)
+                                        do {
+                                            try modelContext.save()
+                                            ImageStore.deleteImage(filename: filename)
+                                        } catch {
+                                            // Model delete failed; image file preserved
+                                        }
+                                    }
+                                } label: {
+                                    Label("Delete", systemImage: "trash")
+                                }
+                            }
+                        }
+                    }
+                }
+            }
         }
     }
 }

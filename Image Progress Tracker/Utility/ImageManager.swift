@@ -21,8 +21,14 @@ enum ImageStore {
     private static let imageCache: NSCache<NSString, UIImage> = {
         let cache = NSCache<NSString, UIImage>()
         cache.countLimit = 200
+        cache.totalCostLimit = 128 * 1024 * 1024 // ~128 MB of decoded bitmap data
         return cache
     }()
+
+    /// Every thumbnail dimension requested by AsyncThumbnail call sites
+    /// (CompareSelect 300, ItemsView 400, CompareView 1400, ItemView 1600).
+    /// Keep in sync if a new dimension is added.
+    private static let thumbnailDimensions: [CGFloat] = [300, 400, 1400, 1600]
 
     static let documentsDirectory: URL = {
         FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0]
@@ -109,24 +115,45 @@ enum ImageStore {
 
         do {
             try data.write(to: url, options: .atomic)
-            imageCache.removeAllObjects()
             return filename
         } catch {
             throw Error.writeFailed
         }
     }
 
+    /// Synchronously returns the cached thumbnail if present, without touching disk.
+    static func cachedThumbnail(filename: String, maxDimension: CGFloat) -> UIImage? {
+        imageCache.object(forKey: cacheKey(filename: filename, maxDimension: maxDimension))
+    }
+
+    /// In-flight decodes keyed by cache key, so concurrent requests for the
+    /// same thumbnail share one decode. MainActor-serialized: no suspension
+    /// point between lookup and insert, so duplicates cannot be created.
+    @MainActor
+    private static var inFlight: [NSString: Task<UIImage, Never>] = [:]
+
     /// Generates a cached downsampled image of the given max dimension, loading from disk off-main.
+    @MainActor
     static func loadThumbnail(filename: String, maxDimension: CGFloat) async -> UIImage {
         let key = cacheKey(filename: filename, maxDimension: maxDimension)
         if let cached = imageCache.object(forKey: key) {
             return cached
         }
 
-        let image = await Task.detached(priority: .userInitiated, operation: {
+        if let existing = inFlight[key] {
+            return await existing.value
+        }
+
+        guard !Task.isCancelled else { return placeholder }
+
+        let decode = Task.detached(priority: .userInitiated) {
             loadDownsampledImage(filename: filename, maxDimension: maxDimension) ?? placeholder
-        }).value
-        imageCache.setObject(image, forKey: key)
+        }
+        inFlight[key] = decode
+        let image = await decode.value
+        inFlight[key] = nil
+        let cost = image.cgImage.map { $0.bytesPerRow * $0.height } ?? 0
+        imageCache.setObject(image, forKey: key, cost: cost)
         return image
     }
 
@@ -134,7 +161,9 @@ enum ImageStore {
     static func deleteImage(filename: String) {
         let url = documentsDirectory.appendingPathComponent(filename)
         try? FileManager.default.removeItem(at: url)
-        imageCache.removeAllObjects()
+        for dimension in thumbnailDimensions {
+            imageCache.removeObject(forKey: cacheKey(filename: filename, maxDimension: dimension))
+        }
     }
 
     private static func cacheKey(filename: String, maxDimension: CGFloat) -> NSString {
@@ -188,6 +217,10 @@ struct AsyncThumbnail: View {
             }
         }
         .task(id: taskID) {
+            if let cached = ImageStore.cachedThumbnail(filename: filename, maxDimension: maxDimension) {
+                if image !== cached { image = cached }
+                return
+            }
             image = nil
             let loadedImage = await ImageStore.loadThumbnail(filename: filename, maxDimension: maxDimension)
             guard !Task.isCancelled else { return }

@@ -108,10 +108,12 @@ struct CollectionArchiveDocument: FileDocument {
     static var readableContentTypes: [UTType] { [.pictureTrackCollection] }
     static var writableContentTypes: [UTType] { [.pictureTrackCollection] }
 
+    /// File-backed (mapped) so the encoded archive stays evictable clean pages
+    /// rather than dirty heap while the exporter is presented.
     let archiveData: Data
 
-    init(archive: CollectionArchive) throws {
-        archiveData = try CollectionArchiveCodec.encode(archive)
+    init(archiveData: Data) {
+        self.archiveData = archiveData
     }
 
     init(configuration: ReadConfiguration) throws {
@@ -151,7 +153,7 @@ enum CollectionArchiveService {
     }
 
     static func makeDocument(from snapshot: ExportSnapshot) async throws -> CollectionArchiveDocument {
-        let archive = try await Task.detached(priority: .userInitiated) {
+        try await Task.detached(priority: .userInitiated) {
             let archivedItems = try snapshot.items.sorted { $0.dateCreated < $1.dateCreated }.map { item in
                 guard let imageData = ImageStore.loadImageData(filename: item.imageFilename) else {
                     throw CollectionArchiveError.missingImage(item.imageFilename)
@@ -170,7 +172,7 @@ enum CollectionArchiveService {
                 )
             }
 
-            return CollectionArchive(
+            let archive = CollectionArchive(
                 schemaVersion: CollectionArchive.currentSchemaVersion,
                 exportedAt: Date(),
                 group: .init(
@@ -180,9 +182,26 @@ enum CollectionArchiveService {
                 ),
                 items: archivedItems
             )
-        }.value
 
-        return try CollectionArchiveDocument(archive: archive)
+            // Stage the encoded archive in a temp file and hand out a mapped
+            // Data: the multi-hundred-MB base64 JSON then lives as evictable
+            // file-backed pages instead of dirty heap for as long as the
+            // exporter sheet is up. The file is unlinked immediately — the
+            // mapping keeps the pages valid until the Data is released, and
+            // the kernel reclaims the space even on crash, so no cleanup
+            // bookkeeping is needed anywhere.
+            let encoded = try CollectionArchiveCodec.encode(archive)
+            let tempURL = FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString)
+            do {
+                try encoded.write(to: tempURL)
+                let mapped = try Data(contentsOf: tempURL, options: .mappedIfSafe)
+                try? FileManager.default.removeItem(at: tempURL)
+                return CollectionArchiveDocument(archiveData: mapped)
+            } catch {
+                try? FileManager.default.removeItem(at: tempURL)
+                throw error
+            }
+        }.value
     }
 
     static func readArchive(from url: URL) async throws -> CollectionArchive {
@@ -200,35 +219,36 @@ enum CollectionArchiveService {
         return try CollectionArchiveCodec.decode(data)
     }
 
-    @MainActor
-    static func importArchive(_ archive: CollectionArchive, into modelContext: ModelContext) throws {
-        let importContext = ModelContext(modelContext.container)
-        let group = TrackerGroup(name: archive.group.name, icon: archive.group.icon)
-        importContext.insert(group)
+    static func importArchive(_ archive: CollectionArchive, container: ModelContainer) async throws {
+        try await Task.detached(priority: .userInitiated) {
+            let importContext = ModelContext(container)
+            let group = TrackerGroup(name: archive.group.name, icon: archive.group.icon)
+            importContext.insert(group)
 
-        var writtenFilenames: [String] = []
+            var writtenFilenames: [String] = []
 
-        do {
-            for archivedItem in archive.items {
-                let filename = try ImageStore.saveImageData(archivedItem.imageData)
-                writtenFilenames.append(filename)
+            do {
+                for archivedItem in archive.items {
+                    let filename = try ImageStore.saveImageData(archivedItem.imageData)
+                    writtenFilenames.append(filename)
 
-                let item = TrackerItem(
-                    imageFilename: filename,
-                    notes: archivedItem.notes,
-                    dateCreated: archivedItem.dateCreated
-                )
-                item.group = group
-                importContext.insert(item)
+                    let item = TrackerItem(
+                        imageFilename: filename,
+                        notes: archivedItem.notes,
+                        dateCreated: archivedItem.dateCreated
+                    )
+                    item.group = group
+                    importContext.insert(item)
+                }
+
+                try importContext.save()
+            } catch {
+                for filename in writtenFilenames {
+                    ImageStore.deleteImage(filename: filename)
+                }
+                throw error
             }
-
-            try importContext.save()
-        } catch {
-            for filename in writtenFilenames {
-                ImageStore.deleteImage(filename: filename)
-            }
-            throw error
-        }
+        }.value
     }
 }
 
