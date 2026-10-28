@@ -1,74 +1,71 @@
 import SwiftUI
 
 struct CompareView: View {
-    var group: TrackerGroup
+    @Environment(\.dismiss) private var dismiss
+    /// Newest first.
     private let sortedItems: [TrackerItem]
     @State private var selected: [TrackerItem]
     @State private var selectingImages = false
 
-    init(group: TrackerGroup) {
-        self.group = group
-        let sorted = group.items.sorted { $0.dateCreated > $1.dateCreated }
-        self.sortedItems = sorted
-        if sorted.count >= 2 {
-            _selected = State(initialValue: [sorted[1], sorted[0]])
+    init(items newestFirst: [TrackerItem]) {
+        self.sortedItems = newestFirst
+        if newestFirst.count >= 2 {
+            _selected = State(initialValue: [newestFirst[1], newestFirst[0]])
         } else {
             _selected = State(initialValue: [])
         }
     }
 
     var body: some View {
-        GeometryReader { geo in
-            VStack {
-                Spacer()
-                if selected.count == 2 {
-                    VStack {
-                        HStack(spacing: 0) {
-                            VStack {
-                                Text("Before")
-                                    .font(.headline)
-                                AsyncThumbnail(filename: selected[0].imageFilename, maxDimension: 1400)
-                                    .aspectRatio(contentMode: .fit)
-                                    .frame(width: geo.size.width / 2, alignment: .leading)
-                                    .clipShape(RoundedRectangle(cornerRadius: 12))
-                                Text(selected[0].dateCreated.toMediumString())
-                                    .font(.caption)
-                            }
-                            VStack {
-                                Text("After")
-                                    .font(.headline)
-                                AsyncThumbnail(filename: selected[1].imageFilename, maxDimension: 1400)
-                                    .aspectRatio(contentMode: .fit)
-                                    .frame(width: geo.size.width / 2, alignment: .trailing)
-                                    .clipShape(RoundedRectangle(cornerRadius: 12))
-                                Text(selected[1].dateCreated.toMediumString())
-                                    .font(.caption)
-                            }
-                        }
-                        Text("\(selected[0].dateCreated.daysBetween(selected[1].dateCreated)) days apart.")
-                            .font(.subheadline)
-                            .foregroundStyle(.secondary)
-                            .padding(.top)
-                    }
+        VStack {
+            if selected.count == 2 {
+                // Side by side when the space is wider than tall, stacked
+                // otherwise; on the iPhone Duo the split follows the fold.
+                ArrangementView {
+                    ComparePane(title: "Before", item: selected[0])
+                } secondary: {
+                    ComparePane(title: "After", item: selected[1])
                 }
-                Spacer()
-            }
-            .navigationTitle("Compare")
-            .navigationBarTitleDisplayMode(.inline)
-            .toolbar {
-                ToolbarItem(placement: .topBarTrailing) {
-                    Button { selectingImages = true } label: {
-                        Image(systemName: "square.stack")
-                    }
-                }
-            }
-            .sheet(isPresented: $selectingImages) {
-                CompareSelect(
-                    items: sortedItems,
-                    selectedConstant: selected,
-                    selected: $selected
-                )
+                .arrangementViewStyle(.split)
             }
         }
+        .navigationTitle("Compare")
+        // In the bar rather than under the photos, where a centered caption
+        // would sit on the Duo's fold.
+        .navigationSubtitle(daysApartText)
+        .navigationBarTitleDisplayMode(.inline)
+        .toolbar {
+            ToolbarItem(placement: .cancellationAction) {
+                Button("Done") { dismiss() }
+            }
+            ToolbarItem(placement: .topBarTrailing) {
+                Button("Choose Photos", systemImage: "square.stack") { selectingImages = true }
+            }
+        }
+        .sheet(isPresented: $selectingImages) {
+            CompareSelect(items: sortedItems, selected: $selected)
+        }
+    }
+
+    private var daysApartText: String {
+        guard selected.count == 2 else { return "" }
+        return "\(selected[0].dateCreated.daysBetween(selected[1].dateCreated)) days apart."
+    }
+}
+
+private struct ComparePane: View {
+    let title: String
+    let item: TrackerItem
+
+    var body: some View {
+        VStack(spacing: 8) {
+            Text(title)
+                .font(.headline)
+            AsyncThumbnail(filename: item.imageFilename, contentMode: .fit)
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
+            Text(item.dateCreated.toMediumString())
+                .font(.caption)
+        }
+        .padding(8)
     }
 }

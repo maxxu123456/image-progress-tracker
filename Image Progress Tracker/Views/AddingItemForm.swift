@@ -10,10 +10,16 @@ struct AddingItemForm: View {
     var group: TrackerGroup
 
     @State private var notes = ""
+    /// Filled by the camera; encoded into `photo` and released right away.
     @State private var capturedImage: UIImage?
     @State private var capturedMetadata: [String: Any]?
+    /// The bytes Save will write (a library original, or the camera JPEG)
+    /// plus a small preview — never a full-resolution bitmap.
+    @State private var photo: ImageStore.PreparedPhoto?
+    /// The newest camera/library request; an older, slower one that finishes
+    /// later is ignored instead of replacing the newer photo.
+    @State private var photoRequestID = UUID()
     @State private var itemDate: Date = .now
-    @State private var hasDate = false
 
     @State private var showingCamera = false
     @State private var showingPhotoPicker = false
@@ -25,12 +31,16 @@ struct AddingItemForm: View {
     @State private var showingCameraDenied = false
     @State private var isSaving = false
 
+    private var hasPhoto: Bool {
+        photo != nil
+    }
+
     var body: some View {
         NavigationStack {
             Form {
                 Section("Photo") {
-                    if let image = capturedImage {
-                        Image(uiImage: image)
+                    if let preview = photo?.preview {
+                        Image(uiImage: preview)
                             .resizable()
                             .scaledToFit()
                             .frame(maxHeight: 200)
@@ -54,8 +64,8 @@ struct AddingItemForm: View {
                     } label: {
                         HStack {
                             Label(
-                                capturedImage == nil ? "Add Photo" : "Change Photo",
-                                systemImage: capturedImage == nil ? "plus.circle" : "arrow.triangle.2.circlepath"
+                                hasPhoto ? "Change Photo" : "Add Photo",
+                                systemImage: hasPhoto ? "arrow.triangle.2.circlepath" : "plus.circle"
                             )
                             Spacer()
                         }
@@ -67,7 +77,7 @@ struct AddingItemForm: View {
                     }
                 }
 
-                if capturedImage != nil {
+                if hasPhoto {
                     Section("Date Taken") {
                         DatePicker(
                             "Date",
@@ -93,21 +103,25 @@ struct AddingItemForm: View {
                 }
                 ToolbarItem(placement: .confirmationAction) {
                     Button("Save") { saveItem() }
-                        .disabled(capturedImage == nil)
+                        .disabled(!hasPhoto)
                 }
             }
         }
         .interactiveDismissDisabled(isSaving)
-        .sheet(isPresented: $showingCamera) {
+        // The camera UI is designed to own the whole screen; in a sheet it
+        // becomes a small form sheet on the iPhone Duo's inner display.
+        .fullScreenCover(isPresented: $showingCamera) {
             ImagePicker(image: $capturedImage, metadata: $capturedMetadata)
+                .ignoresSafeArea()
         }
-        .photosPicker(isPresented: $showingPhotoPicker, selection: $selectedPhotoItem, matching: .images)
+        .photosPicker(isPresented: $showingPhotoPicker, selection: $selectedPhotoItem, matching: .images, photoLibrary: .shared())
+        // Originals are stored byte-for-byte and travel in exported
+        // collections, so leave the location out at the source.
+        .photosPickerMetadataOptions(.removeLocation)
         .onChange(of: capturedImage) {
             // Camera just returned an image
-            if capturedImage != nil && capturedMetadata != nil {
-                itemDate = .now
-                hasDate = true
-            }
+            guard let capturedImage else { return }
+            prepareCapture(capturedImage, metadata: capturedMetadata)
         }
         .onChange(of: selectedPhotoItem) {
             guard let selectedPhotoItem else { return }
@@ -161,55 +175,78 @@ struct AddingItemForm: View {
         }
     }
 
+    private func prepareCapture(_ image: UIImage, metadata: [String: Any]?) {
+        let requestID = UUID()
+        photoRequestID = requestID
+        isLoadingPhoto = true
+        nonisolated(unsafe) let metadata = metadata
+        // The encode below holds the only other reference; drop the ~46 MB frame once it finishes.
+        capturedImage = nil
+        capturedMetadata = nil
+        Task {
+            let prepared = await Task.detached(priority: .userInitiated) {
+                ImageStore.preparePhoto(capturedImage: image, metadata: metadata)
+            }.value
+            // Ignore a stale encode if another photo was chosen meanwhile.
+            guard photoRequestID == requestID else { return }
+            isLoadingPhoto = false
+            guard let prepared else {
+                errorMessage = "Failed to process the photo."
+                showingError = true
+                return
+            }
+            photo = prepared
+            itemDate = .now
+        }
+    }
+
     // MARK: - Library Import
 
     private func loadFromLibrary(item: PhotosPickerItem) {
+        let requestID = UUID()
+        photoRequestID = requestID
         isLoadingPhoto = true
+        // Cleared so that picking the same photo again still reaches onChange.
+        selectedPhotoItem = nil
         Task {
-            guard let data = try? await item.loadTransferable(type: Data.self),
-                  let image = await Task.detached(priority: .userInitiated, operation: { () -> UIImage? in
-                      // preparingForDisplay forces JPEG decompression here, off-main;
-                      // otherwise the first on-screen draw decodes on the main thread.
-                      guard let decoded = UIImage(data: data) else { return nil }
-                      return decoded.preparingForDisplay() ?? decoded
-                  }).value else {
-                await MainActor.run {
-                    errorMessage = "Failed to load the selected photo."
-                    showingError = true
-                    isLoadingPhoto = false
-                }
+            // Decodes only a small preview; the original bytes are kept for saving.
+            let data = try? await item.loadTransferable(type: Data.self)
+            let prepared = await Task.detached(priority: .userInitiated) {
+                data.flatMap { ImageStore.preparePhoto(from: $0) }
+            }.value
+            // Ignore a slow, stale pick if another photo was chosen meanwhile.
+            guard photoRequestID == requestID else { return }
+            guard let prepared else {
+                errorMessage = "Failed to load the selected photo."
+                showingError = true
+                isLoadingPhoto = false
                 return
             }
 
-            // Try to get the creation date from the PHAsset via its identifier
-            var resolvedDate: Date?
-            if let assetID = item.itemIdentifier {
-                let result = PHAsset.fetchAssets(withLocalIdentifiers: [assetID], options: nil)
-                resolvedDate = result.firstObject?.creationDate
+            // Prefer the date embedded in the photo; fall back to the library
+            // asset's date, which is only readable with library access.
+            var resolvedDate = prepared.captureDate
+            if resolvedDate == nil, let assetID = item.itemIdentifier {
+                resolvedDate = PHAsset.fetchAssets(withLocalIdentifiers: [assetID], options: nil).firstObject?.creationDate
             }
 
-            await MainActor.run {
-                capturedImage = image
-                capturedMetadata = nil
-                itemDate = resolvedDate ?? .now
-                hasDate = resolvedDate != nil
-                isLoadingPhoto = false
-            }
+            photo = prepared
+            itemDate = min(resolvedDate ?? .now, .now)
+            isLoadingPhoto = false
         }
     }
 
     // MARK: - Save
 
     private func saveItem() {
-        guard !isSaving, let image = capturedImage else { return }
+        guard !isSaving, !isLoadingPhoto, let photo else { return }
         isSaving = true
-        // The image and its metadata are pinned by the guards on the photo
-        // menu; notes and date are read after the encode completes, so what
-        // is persisted always matches what is on screen at dismissal.
-        let metadata = capturedMetadata
+        // The photo is pinned by the guards on the photo menu; notes and date
+        // are read after the write completes, so what is persisted always
+        // matches what is on screen at dismissal.
         Task {
             let filename = await Task.detached(priority: .userInitiated) {
-                ImageStore.saveJPEG(image, metadata: metadata)
+                try? ImageStore.saveImageData(photo.data)
             }.value
             defer { isSaving = false }
             guard let filename else {

@@ -37,7 +37,7 @@
 		<dict>
 			<key>UTTypeConformsTo</key>
 			<array>
-				<string>public.json</string>
+				<string>public.data</string>
 			</array>
 			<key>UTTypeDescription</key>
 			<string>PictureTrack Collection Archive</string>
@@ -50,7 +50,7 @@
 					<string>ptcollection</string>
 				</array>
 				<key>public.mime-type</key>
-				<string>application/vnd.picturetrack.collection+json</string>
+				<string>application/vnd.picturetrack.collection</string>
 			</dict>
 		</dict>
 	</array>
