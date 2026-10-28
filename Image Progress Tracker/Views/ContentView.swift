@@ -3,79 +3,43 @@ import SwiftData
 
 struct ContentView: View {
     @Query(sort: \TrackerGroup.name) private var groups: [TrackerGroup]
-    @Query private var items: [TrackerItem]
     @Environment(\.modelContext) private var modelContext
+    /// The open group's id. Scene storage, so the open collection survives the
+    /// scene being rebuilt (fold/unfold, multitasking resizes, relaunch).
+    @SceneStorage("selectedGroupID") private var selectedGroupID: String?
     @State private var addingGroup = false
     @State private var showingInfo = false
     @State private var showingImporter = false
     @State private var isImportingCollection = false
+    /// Files waiting to import; several can arrive at once (AirDrop, or opening
+    /// another while one is still importing), and each is imported in turn.
+    @State private var pendingImports: [URL] = []
     @State private var showingTransferError = false
     @State private var transferErrorMessage = ""
 
-    private var itemCountsByGroupID: [String: Int] {
-        items.reduce(into: [:]) { counts, item in
-            guard let groupID = item.group?.id else { return }
-            counts[groupID, default: 0] += 1
-        }
+    private var selectedGroup: TrackerGroup? {
+        guard let selectedGroupID else { return nil }
+        return groups.first { $0.id == selectedGroupID }
     }
 
     var body: some View {
-        let itemCounts = itemCountsByGroupID
-        NavigationStack {
-            VStack {
-                if groups.isEmpty {
-                    ContentUnavailableView(
-                        "No Groups",
-                        systemImage: "folder.badge.plus",
-                        description: Text("Add a Group using the button below.")
-                    )
-                } else {
-                    List {
-                        ForEach(groups, id: \.id) { group in
-                            NavigationLink(value: group.persistentModelID) {
-                                HStack {
-                                    Image(systemName: group.icon)
-                                    Text(group.name)
-                                    Text(itemCountText(for: group, counts: itemCounts))
-                                        .fontWeight(.light)
-                                        .font(.subheadline)
-                                        .foregroundStyle(.secondary)
-                                }
-                            }
-                        }
-                        .onDelete(perform: deleteGroups)
-                    }
+        // Collapses to a single stack on compact widths (the outer display,
+        // other iPhones); shows groups beside the open group on the inner display.
+        NavigationSplitView {
+            sidebar
+        } detail: {
+            if let group = selectedGroup {
+                NavigationStack {
+                    ItemsView(group: group)
                 }
-
-                Spacer()
-
-                Button {
-                    addingGroup = true
-                } label: {
-                    Label("Add Group", systemImage: "folder.badge.plus")
-                        .bold()
-                }
-                .buttonStyle(.glass)
-                .padding()
-            }
-            .navigationTitle("Groups")
-            .navigationDestination(for: PersistentIdentifier.self) { groupID in
-                ItemsViewResolver(groupID: groupID)
-            }
-            .toolbar {
-                ToolbarItem(placement: .topBarLeading) {
-                    Button { showingInfo = true } label: {
-                        Image(systemName: "info.circle")
-                    }
-                }
-                ToolbarItem(placement: .topBarTrailing) {
-                    Button {
-                        showingImporter = true
-                    } label: {
-                        Image(systemName: "square.and.arrow.down")
-                    }
-                    .disabled(isImportingCollection)
-                }
+                .id(group.id)
+            } else if !groups.isEmpty {
+                // With no groups at all, the sidebar's own empty state is enough.
+                ContentUnavailableView(
+                    "No Group Selected",
+                    systemImage: "folder",
+                    description: Text("Choose a Group to see its photos.")
+                )
             }
         }
         .sheet(isPresented: $addingGroup) {
@@ -88,7 +52,18 @@ struct ContentView: View {
             isPresented: $showingImporter,
             allowedContentTypes: [.pictureTrackCollection]
         ) { result in
-            handleCollectionImport(result: result)
+            switch result {
+            case .success(let url):
+                importCollection(from: url)
+            case .failure(let error):
+                guard !FileTransferErrorHelper.isUserCancelled(error) else { return }
+                transferErrorMessage = error.localizedDescription
+                showingTransferError = true
+            }
+        }
+        // Files, AirDrop, Mail: the system hands over a .ptcollection the app owns.
+        .onOpenURL { url in
+            importCollection(from: url)
         }
         .alert("Collection Transfer", isPresented: $showingTransferError) {
             Button("OK") {}
@@ -100,12 +75,62 @@ struct ContentView: View {
                 progressOverlay(title: "Importing Collection…")
             }
         }
+        .task {
+            await CollectionArchiveService.recoverInterruptedImports(container: modelContext.container)
+        }
+    }
+
+    private var sidebar: some View {
+        VStack {
+            if groups.isEmpty {
+                ContentUnavailableView(
+                    "No Groups",
+                    systemImage: "folder.badge.plus",
+                    description: Text("Add a Group using the button below.")
+                )
+            } else {
+                List(selection: $selectedGroupID) {
+                    ForEach(groups, id: \.id) { group in
+                        NavigationLink(value: group.id) {
+                            GroupRow(group: group)
+                        }
+                    }
+                    .onDelete(perform: deleteGroups)
+                }
+            }
+
+            Spacer()
+
+            Button {
+                addingGroup = true
+            } label: {
+                Label("Add Group", systemImage: "folder.badge.plus")
+                    .bold()
+            }
+            .buttonStyle(.glass)
+            .padding()
+        }
+        .navigationTitle("Groups")
+        .toolbar {
+            ToolbarItem(placement: .topBarLeading) {
+                Button("Information", systemImage: "info.circle") { showingInfo = true }
+            }
+            ToolbarItem(placement: .topBarTrailing) {
+                Button("Import Collection", systemImage: "square.and.arrow.down") {
+                    showingImporter = true
+                }
+                .disabled(isImportingCollection)
+            }
+        }
     }
 
     private func deleteGroups(at offsets: IndexSet) {
         for index in offsets {
             let group = groups[index]
             let filenames = group.items.map(\.imageFilename)
+            if group.id == selectedGroupID {
+                selectedGroupID = nil
+            }
             modelContext.delete(group)
             do {
                 try modelContext.save()
@@ -116,36 +141,40 @@ struct ContentView: View {
                     ImageStore.deleteImage(filename: filename)
                 }
             } catch {
-                // Model delete failed; image files preserved
+                // Model delete failed; image files preserved. Undo the pending
+                // delete too, or a later save would commit it and orphan them.
+                modelContext.rollback()
             }
         }
     }
 
-    private func itemCountText(for group: TrackerGroup, counts: [String: Int]) -> String {
-        let count = counts[group.id, default: 0]
-        return count == 1 ? "1 item" : "\(count) items"
-    }
+    private func importCollection(from url: URL) {
+        pendingImports.append(url)
+        guard !isImportingCollection else { return }
+        isImportingCollection = true
 
-    private func handleCollectionImport(result: Result<URL, Error>) {
-        switch result {
-        case .success(let url):
-            isImportingCollection = true
+        Task { @MainActor in
+            // Lets a long import finish if the user switches apps.
+            let backgroundActivity = BackgroundActivity(name: "Import Collection")
+            defer { backgroundActivity.end() }
 
-            Task { @MainActor in
+            var failures: [String] = []
+            while !pendingImports.isEmpty {
+                let next = pendingImports.removeFirst()
                 do {
-                    let archive = try await CollectionArchiveService.readArchive(from: url)
-                    try await CollectionArchiveService.importArchive(archive, container: modelContext.container)
-                    isImportingCollection = false
+                    try await CollectionArchiveService.importCollection(from: next, container: modelContext.container)
                 } catch {
-                    isImportingCollection = false
-                    transferErrorMessage = error.localizedDescription
-                    showingTransferError = true
+                    failures.append(error.localizedDescription)
                 }
+                // The app does not expose Documents, so an Inbox copy is useless
+                // to the user once the import has been attempted either way.
+                CollectionArchiveService.removeInboxCopy(at: next)
             }
-        case .failure(let error):
-            guard !FileTransferErrorHelper.isUserCancelled(error) else { return }
-            transferErrorMessage = error.localizedDescription
-            showingTransferError = true
+            isImportingCollection = false
+            if !failures.isEmpty {
+                transferErrorMessage = failures.joined(separator: "\n\n")
+                showingTransferError = true
+            }
         }
     }
 
@@ -155,28 +184,56 @@ struct ContentView: View {
             Color.black.opacity(0.15)
                 .ignoresSafeArea()
 
-            VStack(spacing: 12) {
-                ProgressView()
-                    .controlSize(.large)
-                Text(title)
-                    .font(.headline)
+            // This overlay spans both columns, so on a partly folded iPhone Duo
+            // its center is the hinge; keep the card on the leading side.
+            GeometryReader { proxy in
+                let fold = proxy.reservedRegions(kind: .division).first(where: \.isActive)
+                VStack(spacing: 12) {
+                    ProgressView()
+                        .controlSize(.large)
+                    Text(title)
+                        .font(.headline)
+                }
+                .padding(24)
+                .background(.ultraThinMaterial, in: RoundedRectangle(cornerRadius: 18))
+                .frame(width: fold.map { max($0.frame.minX, 0) } ?? proxy.size.width, height: proxy.size.height)
             }
-            .padding(24)
-            .background(.ultraThinMaterial, in: RoundedRectangle(cornerRadius: 18))
         }
     }
 }
 
-/// Resolves a PersistentIdentifier back into a TrackerGroup for navigation.
-struct ItemsViewResolver: View {
-    let groupID: PersistentIdentifier
-    @Environment(\.modelContext) private var modelContext
+/// A UIKit background task for the lifetime of some work, ended exactly once
+/// (by the caller, or by the system's expiration handler).
+@MainActor
+private final class BackgroundActivity {
+    private var identifier: UIBackgroundTaskIdentifier = .invalid
+
+    init(name: String) {
+        identifier = UIApplication.shared.beginBackgroundTask(withName: name) { [weak self] in
+            self?.end()
+        }
+    }
+
+    func end() {
+        guard identifier != .invalid else { return }
+        UIApplication.shared.endBackgroundTask(identifier)
+        identifier = .invalid
+    }
+}
+
+/// One sidebar row. Reads only its own group's items, so editing a photo's
+/// notes in one group does not re-render the whole list.
+private struct GroupRow: View {
+    let group: TrackerGroup
 
     var body: some View {
-        if let group = modelContext.model(for: groupID) as? TrackerGroup {
-            ItemsView(group: group)
-        } else {
-            ContentUnavailableView("Group Not Found", systemImage: "exclamationmark.triangle")
+        HStack {
+            Image(systemName: group.icon)
+            Text(group.name)
+            Text(group.items.count == 1 ? "1 item" : "\(group.items.count) items")
+                .fontWeight(.light)
+                .font(.subheadline)
+                .foregroundStyle(.secondary)
         }
     }
 }

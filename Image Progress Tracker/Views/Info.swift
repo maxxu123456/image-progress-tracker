@@ -27,11 +27,11 @@ struct Info: View {
                 Section("Getting Started") {
                     instructionRow(
                         title: "Add a collection",
-                        detail: "Tap Add Group at the bottom of the Groups screen."
+                        detail: "Tap Add Group on the Groups screen."
                     )
                     instructionRow(
                         title: "Add a photo",
-                        detail: "Open a collection and tap the + button in the top-right corner."
+                        detail: "Open a collection and tap the + button."
                     )
                     instructionRow(
                         title: "Edit notes",
@@ -42,11 +42,11 @@ struct Info: View {
                 Section("Import and Export") {
                     instructionRow(
                         title: "Import a collection",
-                        detail: "On the Groups screen, use the top-right import button and choose a .ptcollection file."
+                        detail: "On the Groups screen, tap the import button and choose a .ptcollection file. You can also open one from Files, AirDrop, or Mail."
                     )
                     instructionRow(
                         title: "Export current collection",
-                        detail: "Inside a collection, use the top-right export button to export the collection you are viewing."
+                        detail: "Inside a collection, tap the export button to save it as a .ptcollection file."
                     )
                 }
 

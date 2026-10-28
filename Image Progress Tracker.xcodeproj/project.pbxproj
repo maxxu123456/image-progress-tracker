@@ -12,6 +12,7 @@
 		9A262244276FD2C200CA1BB2 /* Symbols.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A262243276FD2C200CA1BB2 /* Symbols.swift */; };
 		9A262246276FE8F000CA1BB2 /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A262245276FE8F000CA1BB2 /* Constants.swift */; };
 		9A3D7E1F2F6A100100B8C001 /* CollectionArchive.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A3D7E1E2F6A100100B8C001 /* CollectionArchive.swift */; };
+		9A3D7E222F6A100100B8C001 /* CollectionArchiveFormat.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A3D7E212F6A100100B8C001 /* CollectionArchiveFormat.swift */; };
 		9A616E0526FBD46A001E59DC /* DateManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A616E0426FBD46A001E59DC /* DateManager.swift */; };
 		9A616E0726FBD637001E59DC /* ItemView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A616E0626FBD637001E59DC /* ItemView.swift */; };
 		9A97A7C726C37B44003E6BA0 /* Image_Progress_TrackerApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A97A7C626C37B44003E6BA0 /* Image_Progress_TrackerApp.swift */; };
@@ -36,6 +37,7 @@
 		9A262243276FD2C200CA1BB2 /* Symbols.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Symbols.swift; sourceTree = "<group>"; };
 		9A262245276FE8F000CA1BB2 /* Constants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Constants.swift; sourceTree = "<group>"; };
 		9A3D7E1E2F6A100100B8C001 /* CollectionArchive.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CollectionArchive.swift; sourceTree = "<group>"; };
+		9A3D7E212F6A100100B8C001 /* CollectionArchiveFormat.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CollectionArchiveFormat.swift; sourceTree = "<group>"; };
 		9A616E0426FBD46A001E59DC /* DateManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DateManager.swift; sourceTree = "<group>"; };
 		9A616E0626FBD637001E59DC /* ItemView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ItemView.swift; sourceTree = "<group>"; };
 		9A97A7C326C37B44003E6BA0 /* Image Progress Tracker.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Image Progress Tracker.app"; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -73,6 +75,7 @@
 				9A616E0426FBD46A001E59DC /* DateManager.swift */,
 				9AD52EA626D1D54A0026D57C /* ImageManager.swift */,
 				9A3D7E1E2F6A100100B8C001 /* CollectionArchive.swift */,
+				9A3D7E212F6A100100B8C001 /* CollectionArchiveFormat.swift */,
 				9A262243276FD2C200CA1BB2 /* Symbols.swift */,
 				9A262245276FE8F000CA1BB2 /* Constants.swift */,
 			);
@@ -237,6 +240,7 @@
 				9A262246276FE8F000CA1BB2 /* Constants.swift in Sources */,
 				9AD288442F5A873700997E3E /* TrackerGroup.swift in Sources */,
 				9A3D7E1F2F6A100100B8C001 /* CollectionArchive.swift in Sources */,
+				9A3D7E222F6A100100B8C001 /* CollectionArchiveFormat.swift in Sources */,
 				9A262244276FD2C200CA1BB2 /* Symbols.swift in Sources */,
 				9A262241276FD24900CA1BB2 /* SymbolsPicker.swift in Sources */,
 				9A616E0526FBD46A001E59DC /* DateManager.swift in Sources */,
@@ -309,7 +313,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 26.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 27.1;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
 				ONLY_ACTIVE_ARCH = YES;
@@ -364,7 +368,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 26.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 27.1;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
 				SDKROOT = iphoneos;
@@ -386,7 +390,7 @@
 				DEVELOPMENT_TEAM = 44XLG9YML7;
 				ENABLE_PREVIEWS = YES;
 				INFOPLIST_FILE = "Image Progress Tracker/Info.plist";
-				IPHONEOS_DEPLOYMENT_TARGET = 26.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 27.1;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -412,7 +416,7 @@
 				DEVELOPMENT_TEAM = 44XLG9YML7;
 				ENABLE_PREVIEWS = YES;
 				INFOPLIST_FILE = "Image Progress Tracker/Info.plist";
-				IPHONEOS_DEPLOYMENT_TARGET = 26.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 27.1;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",

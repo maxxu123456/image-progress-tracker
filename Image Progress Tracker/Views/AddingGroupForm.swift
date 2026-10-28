@@ -37,7 +37,8 @@ struct AddingGroupForm: View {
                         try? modelContext.save()
                         dismiss()
                     }
-                    .disabled(groupName.isEmpty)
+                    // Same rule the collection file format enforces on export/import.
+                    .disabled(!CollectionArchiveFormat.isNonBlankName(groupName))
                 }
             }
         }

@@ -26,3 +26,7 @@ build/
 # Local editor settings
 .idea/
 .vscode/
+
+# Python (Tools/PTCollectionTests reference model)
+__pycache__/
+*.pyc

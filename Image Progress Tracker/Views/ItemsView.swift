@@ -5,7 +5,6 @@ struct ItemsView: View {
     @Environment(\.modelContext) private var modelContext
     var group: TrackerGroup
     @State private var addingItem = false
-    @State private var showingCompare = false
     @State private var showingSavedPopup = false
     @State private var exportDocument: CollectionArchiveDocument?
     @State private var exportFilename = ""
@@ -15,7 +14,8 @@ struct ItemsView: View {
     @State private var transferErrorMessage = ""
 
     var body: some View {
-        GroupItemsList(group: group, showingCompare: $showingCompare, showingSavedPopup: $showingSavedPopup)
+        GroupItemsList(group: group, showingSavedPopup: $showingSavedPopup)
+        .equatable()
         .overlay {
             if showingSavedPopup {
                 VStack(spacing: 6) {
@@ -34,25 +34,16 @@ struct ItemsView: View {
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {
             ToolbarItemGroup(placement: .topBarTrailing) {
-                Button {
+                Button("Export Collection", systemImage: "square.and.arrow.up") {
                     prepareCollectionExport()
-                } label: {
-                    Image(systemName: "square.and.arrow.up")
                 }
                 .disabled(isPreparingExport)
 
-                Button { addingItem = true } label: {
-                    Image(systemName: "plus")
-                }
+                Button("Add Photo", systemImage: "plus") { addingItem = true }
             }
         }
         .sheet(isPresented: $addingItem) {
             AddingItemForm(group: group)
-        }
-        .sheet(isPresented: $showingCompare) {
-            NavigationStack {
-                CompareView(group: group)
-            }
         }
         .fileExporter(
             isPresented: $showingExporter,
@@ -120,9 +111,11 @@ struct ItemsView: View {
     }
 
     private func handleExportResult(_ result: Result<URL, Error>) {
+        // Release the mapped archive whether the export finished or was cancelled.
+        exportDocument = nil
         switch result {
         case .success:
-            exportDocument = nil
+            break
         case .failure(let error):
             guard !FileTransferErrorHelper.isUserCancelled(error) else { return }
             transferErrorMessage = error.localizedDescription
@@ -131,24 +124,35 @@ struct ItemsView: View {
     }
 }
 
-/// Owns the group-scoped, pre-sorted item query so the row list neither
+/// Owns the group-scoped, pre-sorted item query so the grid neither
 /// re-sorts on every parent body evaluation nor re-evaluates when
-/// export/sheet state toggles in ItemsView.
-private struct GroupItemsList: View {
+/// export/sheet state toggles in ItemsView (Equatable on the group: a
+/// Query rebuilt in init would otherwise always compare as changed).
+private struct GroupItemsList: View, Equatable {
     @Environment(\.modelContext) private var modelContext
-    @Binding var showingCompare: Bool
+    let groupID: String
     @Binding var showingSavedPopup: Bool
+    @State private var showingCompare = false
     @Query private var items: [TrackerItem]
 
-    init(group: TrackerGroup, showingCompare: Binding<Bool>, showingSavedPopup: Binding<Bool>) {
-        _showingCompare = showingCompare
+    /// Adaptive columns: two on compact iPhones and the Duo's outer display,
+    /// more as the width grows on the inner display.
+    private let columns = [GridItem(.adaptive(minimum: 150, maximum: 240), spacing: 16)]
+
+    init(group: TrackerGroup, showingSavedPopup: Binding<Bool>) {
         _showingSavedPopup = showingSavedPopup
         let groupID = group.id
+        self.groupID = groupID
         _items = Query(
             filter: #Predicate<TrackerItem> { $0.group?.id == groupID },
             sort: \TrackerItem.dateCreated,
             order: .reverse
         )
+    }
+
+    /// The binding points at stable @State in ItemsView, so only the group matters.
+    nonisolated static func == (lhs: Self, rhs: Self) -> Bool {
+        lhs.groupID == rhs.groupID
     }
 
     var body: some View {
@@ -163,20 +167,18 @@ private struct GroupItemsList: View {
 
             ScrollView {
                 if items.isEmpty {
-                    Text("Add an Item using the button above.")
+                    // Not "above": on the iPhone Duo the toolbar is a vertical bar beside the content.
+                    Text("Add an Item using the + button.")
                         .padding(.top, 40)
                 } else {
-                    LazyVStack(spacing: 16) {
+                    LazyVGrid(columns: columns, spacing: 16) {
                         ForEach(items, id: \.id) { item in
                             NavigationLink(destination: ItemView(item: item)) {
-                                VStack {
+                                VStack(spacing: 6) {
                                     Text(item.dateCreated.toMediumString())
                                         .foregroundStyle(.primary)
-                                    AsyncThumbnail(filename: item.imageFilename, maxDimension: 400)
-                                        .scaledToFill()
-                                        .frame(width: 200, height: 200, alignment: .center)
-                                        .clipped()
-                                        .clipShape(RoundedRectangle(cornerRadius: 12))
+                                    AsyncThumbnail(filename: item.imageFilename)
+                                        .aspectRatio(1, contentMode: .fit)
                                 }
                             }
                             .contextMenu {
@@ -200,7 +202,9 @@ private struct GroupItemsList: View {
                                             try modelContext.save()
                                             ImageStore.deleteImage(filename: filename)
                                         } catch {
-                                            // Model delete failed; image file preserved
+                                            // Model delete failed; image file preserved. Undo the
+                                            // pending delete so a later save cannot orphan it.
+                                            modelContext.rollback()
                                         }
                                     }
                                 } label: {
@@ -209,7 +213,16 @@ private struct GroupItemsList: View {
                             }
                         }
                     }
+                    .padding(.horizontal)
                 }
+            }
+        }
+        // Full screen so the two photos get the whole display — on the iPhone
+        // Duo the split lands on the fold, one photo per half. Reuses this
+        // query's newest-first array instead of re-sorting group.items.
+        .fullScreenCover(isPresented: $showingCompare) {
+            NavigationStack {
+                CompareView(items: items)
             }
         }
     }

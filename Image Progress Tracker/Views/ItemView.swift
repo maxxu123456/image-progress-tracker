@@ -2,10 +2,17 @@ import SwiftUI
 import SwiftData
 
 struct ItemView: View {
-    @Bindable var item: TrackerItem
+    let item: TrackerItem
     @Environment(\.modelContext) private var modelContext
+    @Environment(\.scenePhase) private var scenePhase
     @State private var isEditingNote = false
+    /// Notes are edited here and written to the model once, so typing does
+    /// not re-run every live @Query in the navigation stack per keystroke.
+    @State private var noteDraft = ""
     @State private var showingSavedPopup = false
+    /// Visible height of the scroll view, so a portrait photo on a short,
+    /// wide display (the Duo's open inner screen) fits without scrolling.
+    @State private var viewportHeight: CGFloat = 0
     @FocusState private var noteFieldFocused: Bool
 
     var body: some View {
@@ -15,11 +22,12 @@ struct ItemView: View {
                     .font(.subheadline)
                     .foregroundStyle(.secondary)
 
-                AsyncThumbnail(filename: item.imageFilename, maxDimension: 1600)
-                    .aspectRatio(contentMode: .fit)
+                AsyncThumbnail(filename: item.imageFilename, contentMode: .fit)
+                    .frame(maxHeight: viewportHeight > 0 ? viewportHeight * 0.85 : nil)
+                    .padding(.horizontal)
 
                 if isEditingNote {
-                    TextField("Add a note", text: $item.notes, axis: .vertical)
+                    TextField("Add a note", text: $noteDraft, axis: .vertical)
                         .focused($noteFieldFocused)
                         .padding(12)
                         .background(.fill.tertiary)
@@ -37,6 +45,15 @@ struct ItemView: View {
                 }
             }
         }
+        .onDisappear(perform: commitNote)
+        .onChange(of: scenePhase) { _, phase in
+            if phase != .active { commitNote() }
+        }
+        .onScrollGeometryChange(for: CGFloat.self) { geometry in
+            geometry.containerSize.height
+        } action: { _, height in
+            viewportHeight = height
+        }
         .overlay {
             if showingSavedPopup {
                 savedPopup
@@ -46,10 +63,12 @@ struct ItemView: View {
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {
             ToolbarItem(placement: .topBarTrailing) {
-                Button {
+                Button(isEditingNote ? "Done Editing Note" : "Edit Note", systemImage: isEditingNote ? "checkmark.circle.fill" : "pencil") {
                     if isEditingNote {
                         // Finishing edit — save
-                        try? modelContext.save()
+                        commitNote()
+                    } else {
+                        noteDraft = item.notes
                     }
                     withAnimation {
                         isEditingNote.toggle()
@@ -57,12 +76,10 @@ struct ItemView: View {
                     if isEditingNote {
                         noteFieldFocused = true
                     }
-                } label: {
-                    Image(systemName: isEditingNote ? "checkmark.circle.fill" : "pencil")
                 }
             }
             ToolbarItem(placement: .topBarTrailing) {
-                Button {
+                Button("Save to Photos", systemImage: "arrow.down.circle") {
                     ImageSaver().saveToPhotoLibrary(filename: item.imageFilename, creationDate: item.dateCreated) { success in
                         guard success else { return }
                         withAnimation { showingSavedPopup = true }
@@ -70,11 +87,17 @@ struct ItemView: View {
                             withAnimation { showingSavedPopup = false }
                         }
                     }
-                } label: {
-                    Image(systemName: "arrow.down.circle")
                 }
             }
         }
+    }
+
+    /// Writes the draft back while editing (checkmark, leaving the screen, or
+    /// the app moving to the background).
+    private func commitNote() {
+        guard isEditingNote, noteDraft != item.notes else { return }
+        item.notes = noteDraft
+        try? modelContext.save()
     }
 
     private var savedPopup: some View {

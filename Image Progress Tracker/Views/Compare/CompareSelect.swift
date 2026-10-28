@@ -1,57 +1,63 @@
 import SwiftUI
 
 struct CompareSelect: View {
-    private let columns = [GridItem(.flexible()), GridItem(.flexible()), GridItem(.flexible())]
+    /// Adaptive so the grid keeps a sensible cell size from the Duo's outer
+    /// display up to a sheet on the inner display.
+    private let columns = [GridItem(.adaptive(minimum: 96), spacing: 8)]
     @Environment(\.dismiss) private var dismiss
     var items: [TrackerItem]
-    @State var selectedConstant: [TrackerItem]
     @Binding var selected: [TrackerItem]
+    /// Edited here and committed only by Save, so Cancel or a swipe-dismiss
+    /// leaves the comparison as it was (never with just one photo).
+    @State private var draft: [TrackerItem]
+
+    init(items: [TrackerItem], selected: Binding<[TrackerItem]>) {
+        self.items = items
+        _selected = selected
+        _draft = State(initialValue: selected.wrappedValue)
+    }
 
     var body: some View {
         NavigationStack {
-            GeometryReader { geo in
-                ScrollView {
-                    LazyVGrid(columns: columns) {
-                        ForEach(items, id: \.id) { item in
-                            let isSelected = selected.contains(where: { $0.id == item.id })
-                            AsyncThumbnail(filename: item.imageFilename, maxDimension: 300)
-                                .scaledToFill()
-                                .frame(width: geo.size.width / 3.5, height: geo.size.width / 3.5, alignment: .center)
-                                .clipped()
-                                .cornerRadius(10)
-                                .imageSelected(condition: isSelected)
-                                .onTapGesture {
-                                    if !isSelected && selected.count < 2 {
-                                        if selected.isEmpty {
-                                            selected.append(item)
-                                        } else if item.dateCreated < selected[0].dateCreated {
-                                            selected.insert(item, at: 0)
-                                        } else {
-                                            selected.append(item)
-                                        }
-                                    } else if isSelected {
-                                        selected.removeAll(where: { $0.id == item.id })
+            ScrollView {
+                LazyVGrid(columns: columns, spacing: 8) {
+                    ForEach(items, id: \.id) { item in
+                        let isSelected = draft.contains(where: { $0.id == item.id })
+                        AsyncThumbnail(filename: item.imageFilename, cornerRadius: 10)
+                            .aspectRatio(1, contentMode: .fit)
+                            .imageSelected(condition: isSelected)
+                            .contentShape(Rectangle())
+                            .onTapGesture {
+                                if !isSelected && draft.count < 2 {
+                                    if draft.isEmpty {
+                                        draft.append(item)
+                                    } else if item.dateCreated < draft[0].dateCreated {
+                                        draft.insert(item, at: 0)
+                                    } else {
+                                        draft.append(item)
                                     }
+                                } else if isSelected {
+                                    draft.removeAll(where: { $0.id == item.id })
                                 }
-                        }
+                            }
                     }
                 }
+                .padding()
             }
-            .padding()
             .navigationTitle("Select Two Photos")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
                     Button("Cancel") {
-                        selected = selectedConstant
                         dismiss()
                     }
                 }
                 ToolbarItem(placement: .confirmationAction) {
                     Button("Save") {
+                        selected = draft
                         dismiss()
                     }
-                    .disabled(selected.count != 2)
+                    .disabled(draft.count != 2)
                 }
             }
         }
